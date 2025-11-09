@@ -186,26 +186,26 @@
         <!-- Summary sheet with deco corners -->
         <div class="luxe-card fade-in-soft">
           <div class="luxe-card__inner">
-            <dl class="mx-auto grid max-w-md grid-cols-[7.5rem_1fr] md:grid-cols-[8.5rem_1fr] gap-y-3 gap-x-6 text-base md:text-lg">
+            <dl class="mx-auto grid max-w-lg grid-cols-[5.5rem_1fr] md:grid-cols-[6.25rem_1fr] gap-y-1.5 gap-x-3 text-base md:text-lg">
               <dt class="text-white/70 tracking-wide leading-snug">日　時</dt><dd class="text-white/90 leading-snug nums-unified">{{ dateLabel }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
+              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionOpenTime || '—' }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
+              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <template v-if="ceremonyTime">
                 <dt class="text-white/70 tracking-wide leading-snug">挙　式</dt>
                 <dd class="text-white/90 leading-snug nums-unified">{{ ceremonyTime }}</dd>
-                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
+                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               </template>
               <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionTime || '—' }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
-              <dt class="text-white/70 tracking-wide leading-snug">場　所</dt><dd class="text-white/90 leading-snug wrap-nice">{{ placeDisplay }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
+              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              <dt class="text-white/70 tracking-wide leading-snug">場　所</dt><dd class="text-white/90 leading-snug wrap-nice" v-html="placeDisplayBr"></dd>
+              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <dt class="text-white/70 tracking-wide leading-snug">住　所</dt>
               <dd class="text-white/90 leading-snug nums-unified wrap-nice">
                 <template v-if="mapPlaceUrl">
-                  <a :href="mapPlaceUrl" target="_blank" rel="noopener" class="underline decoration-[#DCC08E]/40 underline-offset-4 hover:text-[#DCC08E]">{{ venueAddress || '—' }}</a>
+                  <a :href="mapPlaceUrl" target="_blank" rel="noopener" class="underline decoration-[#DCC08E]/40 underline-offset-4 hover:text-[#DCC08E]" v-html="venueAddressBr"></a>
                 </template>
-                <template v-else>{{ venueAddress || '—' }}</template>
+                <template v-else><span v-html="venueAddressBr"></span></template>
               </dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
               <dt class="text-white/70 tracking-wide leading-snug">電話番号</dt><dd class="text-white/90 leading-snug nums-unified">{{ venuePhoneDisplay }}</dd>
@@ -1051,6 +1051,31 @@ function widowSafe(text: string, min: number = 5) {
   } catch {
     return text
   }
+}
+
+// Soft break helpers for place/address to insert <wbr> at natural points
+const placeDisplayBr = computed(() => softBreakPlace(placeDisplay))
+const venueAddressBr = computed(() => softBreakAddress(venueAddress))
+
+function softBreakPlace(s?: string) {
+  const t = (s || '').toString()
+  // Break opportunities after middle dot or spaces
+  return t.replace(/・/g, '・<wbr>').replace(/\s+/g, ' <wbr>')
+}
+function softBreakAddress(s?: string) {
+  let t = (s || '').toString()
+  // After postal code block
+  // Force a line break between postal code and the rest
+  t = t.replace(/(〒\d{3}-\d{4})\s*/, '$1<br>')
+  // After '丁目'
+  t = t.replace(/丁目/g, '丁目<wbr>')
+  // Allow breaks after hyphen between numbers (e.g., 5-25)
+  t = t.replace(/-(?=\d)/g, '<wbr>-')
+  // After commas-like punctuation
+  t = t.replace(/、/g, '、<wbr>')
+  // Normalize excessive spaces
+  t = t.replace(/\s{2,}/g, ' ')
+  return t
 }
 
 // Optional photo upload (任意)
