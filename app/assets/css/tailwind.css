@@ -394,6 +394,9 @@
       50% { transform: translateY(-4px); }
     }
 
+  /* Message content fine-tuning: allow dynamic gap via CSS var */
+  .message-content .message-paras > p + p { margin-top: var(--msg-gap, 1.25rem); }
+
     /* Sparkles */
     .sparkles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
     .sparkle {

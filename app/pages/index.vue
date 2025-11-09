@@ -63,21 +63,25 @@
             <p class="mt-1 text-xs text-royal/70">ご挨拶</p>
             <LeafDivider />
           </header>
-          <div class="mx-auto mt-4 md:mt-6 mb-4 md:mb-6 max-w-[60ch] sm:max-w-[54ch] md:max-w-[46ch] text-center max-h-[70svh] md:max-h-[60vh] overflow-auto">
+          <div
+            ref="messageContentWrap"
+            class="mx-auto mt-4 md:mt-6 mb-4 md:mb-6 max-w-[60ch] sm:max-w-[54ch] md:max-w-[46ch] text-center message-content"
+            :style="messageContentStyle"
+          >
             <!-- 謹啓（左寄せ） -->
-            <p v-if="parts.startLine" class="font-display text-[15px] md:text-base leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5">{{ parts.startLine }}</p>
+            <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5">{{ parts.startLine }}</p>
 
             <!-- 本文（改行維持・中央寄せ） -->
-            <div class="text-center space-y-5 sm:space-y-6 md:space-y-7">
-              <p v-for="(para, i) in bodyBlocks" :key="i" class="font-display text-[15px] md:text-base leading-[2.2] md:leading-[2.7] tracking-normal text-royal/90" style="text-wrap: balance;">{{ para }}</p>
+            <div class="text-center message-paras">
+              <p v-for="(para, i) in bodyBlocks" :key="i" class="font-display leading-[2.2] md:leading-[2.7] tracking-normal text-royal/90" style="text-wrap: balance;">{{ para }}</p>
             </div>
 
             <!-- 謹白（右寄せ） -->
-            <p v-if="parts.endLine" class="font-display text-[15px] md:text-base leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7">{{ parts.endLine }}</p>
+            <p v-if="parts.endLine" class="font-display leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7">{{ parts.endLine }}</p>
 
             <!-- お名前（中央寄せ） -->
             <div v-if="parts.nameLines.length" class="mt-3 md:mt-4 text-center text-royal/90">
-              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display text-[15px] md:text-base leading-relaxed tracking-normal">{{ nm }}</p>
+              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display leading-relaxed tracking-normal">{{ nm }}</p>
             </div>
           </div>
         </div>
@@ -943,6 +947,19 @@ if (typeof window !== 'undefined') {
 
 // Auto-adjust Message letter box height to viewport minus header
 const letterBoxStyle = ref<Record<string, string>>({})
+const messageContentWrap = ref<HTMLElement | null>(null)
+const messageScale = ref(1)
+const messageFontPx = ref(15)
+const messageGapPx = ref(20)
+const messageContentStyle = computed(() => {
+  return {
+    fontSize: messageFontPx.value + 'px',
+    ['--msg-gap' as any]: messageGapPx.value + 'px',
+    transform: `scale(${messageScale.value})`,
+    transformOrigin: 'top center',
+    willChange: 'transform'
+  } as Record<string, string>
+})
 function updateLetterBoxMinHeight() {
   if (typeof window === 'undefined') return
   const header = document.querySelector('header.sticky') as HTMLElement | null
@@ -951,14 +968,68 @@ function updateLetterBoxMinHeight() {
   const target = Math.max(560, vpH - headerH - 8)
   letterBoxStyle.value = { minHeight: `${target}px` }
 }
+function updateMessageFit() {
+  if (typeof window === 'undefined') return
+  const wrap = messageContentWrap.value
+  if (!wrap) return
+  // Sticky header height (outside the letter box)
+  const stickyHeader = document.querySelector('header.sticky') as HTMLElement | null
+  const stickyH = stickyHeader?.offsetHeight ?? 64
+  const vpH = (window as any).visualViewport?.height ?? window.innerHeight
+  const minPanel = Math.max(560, vpH - stickyH - 8)
+  // Card header inside the white panel (MESSAGE ご挨拶など)
+  const cardHeader = (wrap.previousElementSibling as HTMLElement) || (wrap.parentElement?.querySelector('header') as HTMLElement | null)
+  const headH = cardHeader?.offsetHeight ?? 0
+  const available = Math.max(0, minPanel - headH - 16)
+
+  // Reset to base for current viewport
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches
+  const baseFs = isDesktop ? 16 : 15
+  const baseGap = isDesktop ? 24 : 20
+  messageScale.value = 1
+  messageFontPx.value = baseFs
+  messageGapPx.value = baseGap
+
+  // Measure current content
+  const contentH = wrap.scrollHeight
+  if (!available || !contentH) return
+  if (contentH <= available) return
+
+  const ratio = available / contentH
+  // Try font-size and gap first (down to 12px on mobile)
+  const targetFs = Math.max(12, Math.floor(baseFs * Math.min(1, ratio)))
+  const fsScale = targetFs / baseFs
+  messageFontPx.value = targetFs
+  messageGapPx.value = Math.max(12, Math.round(baseGap * fsScale))
+
+  // Re-measure after style changes; then fallback to scale ifまだはみ出す
+  requestAnimationFrame(() => {
+    const afterH = wrap.scrollHeight
+    if (afterH > available) {
+      const s = Math.min(1, available / afterH)
+      messageScale.value = isDesktop ? 1 : s
+    }
+  })
+}
 onMounted(() => {
   updateLetterBoxMinHeight()
+  // Run after layout settles
+  setTimeout(updateMessageFit, 0)
   window.addEventListener('resize', updateLetterBoxMinHeight, { passive: true })
   ;(window as any).visualViewport?.addEventListener?.('resize', updateLetterBoxMinHeight, { passive: true })
+  window.addEventListener('resize', updateMessageFit, { passive: true })
+  ;(window as any).visualViewport?.addEventListener?.('resize', updateMessageFit, { passive: true })
 })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateLetterBoxMinHeight)
   ;(window as any).visualViewport?.removeEventListener?.('resize', updateLetterBoxMinHeight)
+  window.removeEventListener('resize', updateMessageFit)
+  ;(window as any).visualViewport?.removeEventListener?.('resize', updateMessageFit)
+})
+
+// Recompute scale when message content changes
+watch(messageDisplay, () => {
+  nextTick(() => updateMessageFit())
 })
 
 // Optional photo upload (任意)
