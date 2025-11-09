@@ -1,0 +1,542 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — calm, luxurious palette */
+:root {
+  /* Luxury palette tokens */
+  --ink: 17 24 39;           /* #111827 */
+  --ivory: 248 246 241;      /* #F8F6F1 */
+  --champagne: 241 231 206;  /* #F1E7CE */
+  --gold: 220 192 142;       /* #DCC08E */
+  --gold-weak: 220 192 142;  /* use with rgba(var(--gold-weak),.25) */
+  --royal: 15 26 44;         /* #0F1A2C */
+}
+
+@layer base {
+  html {
+    /* Smooth in-page jumps and reserve space for sticky header (a bit多め) */
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(env(safe-area-inset-top) + 88px);
+    /* Avoid white flash on iOS rubber-band overscroll */
+    background-color: #0E1828; /* navy fallback under body gradient */
+  }
+  body {
+    /* deep navy canvas with subtle vignette; unify JP to Noto Serif JP */
+    @apply text-ink antialiased font-serif leading-relaxed; /* Body font = Noto Serif JP */
+    /* Very subtle vertical gradient: #0E1828 -> #111E33 */
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(15,26,44,.35), rgba(17,30,51,1) 60%),
+      linear-gradient(180deg, #0E1828, #111E33);
+    font-variant-numeric: oldstyle-nums; /* request: oldstyle numerals */
+    font-feature-settings: "liga" 1;
+    /* Reduce scroll chaining; best-effort to curb rubber-band */
+    overscroll-behavior-y: contain;
+  }
+  /* Headings numeric style */
+  h1, h2, h3 { font-variant-numeric: oldstyle-nums; }
+  /* Headings use Playfair Display by default (avoid @apply to prevent circular deps) */
+  h1, h2, h3, .font-display {
+    font-family: "Playfair Display", "Cormorant Garamond", "Noto Serif JP", serif;
+  }
+
+  ::selection { /* gold selection, readable on ivory */
+    @apply bg-gold text-white;
+  }
+}
+
+@layer components {
+  /* Subtle grain/texture overlay (adds tactile luxury) */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 .02 .06 .08 .06 .02 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    opacity: .22;
+    mix-blend-mode: overlay;
+  }
+
+  /* Optional soft sheen overlay for gold areas */
+  .sheen { position: relative; isolation: isolate; }
+  .sheen::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.0) 38%, rgba(255,255,255,.0) 62%, rgba(255,255,255,.12) 100%);
+    mix-blend-mode: soft-light;
+  }
+  
+  /* respect iOS/Android safe areas */
+  .pt-safe { padding-top: max(env(safe-area-inset-top), 12px); }
+  .smallcaps { font-variant-caps: small-caps; }
+  .snap-always { scroll-snap-stop: always; }
+
+  /* Art‑Deco inspired gold accents */
+  .deco-card { position: relative; }
+  .deco-card .corner { position: absolute; width: 22px; height: 22px; pointer-events: none; opacity: .7; }
+  .deco-card .corner::before { content: ''; position: absolute; inset: 0; border-color: rgb(var(--gold)); border-style: solid; }
+  .deco-card .tl::before { border-width: 2px 0 0 2px; border-top-left-radius: 10px; }
+  .deco-card .tr::before { border-width: 2px 2px 0 0; border-top-right-radius: 10px; }
+  .deco-card .bl::before { border-width: 0 0 2px 2px; border-bottom-left-radius: 10px; }
+  .deco-card .br::before { border-width: 0 2px 2px 0; border-bottom-right-radius: 10px; }
+
+  .gold-dotline { position: relative; height: 2px; width: 56px; margin: .5rem auto 0; background: rgb(var(--gold)); border-radius: 9999px; }
+  .gold-dotline::after { content: ''; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; transform: translate(-50%, -50%); background: rgb(var(--gold)); border-radius: 9999px; }
+
+  /* vertical gold double rails for letter box */
+  .rails { position: absolute; top: 20px; bottom: 20px; width: 2px; background: rgb(var(--gold)); opacity: .9; }
+  .rails-left { left: 20px; box-shadow: 3px 0 0 rgba(var(--gold), .65); }
+  .rails-right { right: 20px; box-shadow: -3px 0 0 rgba(var(--gold), .65); }
+  .rails-h { position: absolute; left: 20px; right: 20px; height: 2px; background: rgb(var(--gold)); opacity: .9; }
+  .rails-top { top: 20px; box-shadow: 0 3px 0 rgba(var(--gold), .65); }
+  .rails-bottom { bottom: 20px; box-shadow: 0 -3px 0 rgba(var(--gold), .65); }
+  /* Invitation letter card — ivory paper on royal background */
+.invite-letter { position: relative; border-radius: 1.25rem; padding: 1px; background: linear-gradient(135deg, rgba(var(--gold),.65), rgba(var(--champagne),.85)); }
+.invite-letter__inner {
+    border-radius: 1.2rem;
+    background:
+      radial-gradient(1200px 600px at 120% -20%, rgba(255,255,255,.98), rgba(255,255,255,.98)),
+      linear-gradient(180deg, #fff, #fff);
+    padding: 1.5rem;
+  }
+  @screen md { .invite-letter__inner { padding: 2rem; } }
+  .invite-letter__seal {
+    position: absolute; top: -16px; right: 18px; height: 56px; width: 56px; border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(var(--gold),.95), rgba(var(--champagne),.95));
+    display: grid; place-items: center; color: white; font-weight: 800; font-size: .6rem; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .invite-letter__seal::after { content: 'Invite'; }
+  .invite-letter__eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.3em] text-gold; }
+  .invite-letter__divider { @apply mt-2 h-[2px] w-12 rounded-full bg-gold; }
+
+  /* Gold panel variant — closer to reference image */
+  .invite-letter--gold { position: relative; overflow: hidden; border-radius: 1.25rem; padding: 0; background: transparent; isolation: isolate; }
+  .invite-letter--gold .invite-letter__inner {
+    position: relative; z-index: 1;
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, rgba(var(--gold), .92), rgba(162,134,89,1));
+    color: #fff;
+    text-align: center;
+  }
+  .invite-letter--gold .invite-letter__seal { display: none; }
+  .invite-letter--gold .invite-letter__eyebrow { color: #fff; letter-spacing: .3em; }
+  .invite-letter--gold .invite-letter__divider { @apply bg-white; }
+  /* Feather decorations */
+.invite-letter--gold::before,
+.invite-letter--gold::after { content: none; }
+
+  /* Section-wide gold band with feathers */
+.band-gold { position: relative; background: linear-gradient(180deg, rgba(var(--gold), .95), rgba(162,134,89,1)); color: #fff; }
+/* subtle foil-like sheen and depth so it doesn’t look flat */
+.band-gold::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,.18) 0%, transparent 35%, transparent 65%, rgba(255,255,255,.12) 100%);
+  mix-blend-mode: soft-light; opacity: .24; }
+.band-gold::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 100% at 50% -20%, rgba(255,255,255,.18), transparent 60%);
+  mix-blend-mode: soft-light; opacity: .18; }
+
+  /* Photo band for sections (e.g., countdown) */
+  .band-photo { position: relative; background-size: cover; background-position: center; background-repeat: no-repeat; }
+  .band-photo::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    /* Slightly stronger overlay for legibility on photos */
+    background: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.75));
+  }
+
+  /* Mobile-friendly utilities */
+  .text-shadow-soft { text-shadow: 0 1px 2px rgba(0,0,0,.45); }
+  .text-shadow-weak { text-shadow: 0 1px 6px rgba(0,0,0,.35); }
+  .text-glow { text-shadow: 0 2px 24px rgba(0,0,0,.45), 0 1px 6px rgba(0,0,0,.35); }
+
+  /* Link underline animation */
+  .link-underline { position: relative; }
+  .link-underline::after { content: ''; position: absolute; left: 0; bottom: -1px; height: 1px; width: 0; background: rgb(var(--gold)); opacity: .7; transition: width .15s ease; }
+  .link-underline:hover::after { width: 100%; }
+
+  /* Hero scroll cue */
+  .scroll-cue { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); color: #fff; opacity: .85; z-index: 40; }
+  .scroll-cue svg { width: 18px; height: 18px; animation: cue 1.8s ease-in-out infinite; }
+  @keyframes cue { 0%, 100% { transform: translateY(0); opacity: .8; } 50% { transform: translateY(5px); opacity: 1; } }
+
+  /* Section reveal animation */
+  .reveal { opacity: 0; transform: translateY(6px); }
+  .reveal.is-in { opacity: 1; transform: translateY(0); transition: opacity .24s ease, transform .24s ease; }
+
+  /* Gold title subtle foil noise */
+  .gold-title { position: relative; isolation: isolate; }
+  .gold-title::after { content: ''; position: absolute; inset: -2px; pointer-events: none; mix-blend-mode: soft-light; opacity: .12; background: radial-gradient(rgba(255,255,255,.08), transparent 60%); }
+
+  /* Foil-like gold text utility (use sparingly for headings) */
+  .foil-text {
+    background: linear-gradient(180deg, #F7EFD8, #E6D6AA 60%, #C8A769);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 1px 6px rgba(0,0,0,.18);
+  }
+
+  /* Lined definition list (adds hairline between rows) */
+  .dl-lined dt { padding-top: .25rem; }
+  .dl-lined dd { padding-bottom: .5rem; }
+  .dl-lined dd + dt { border-top: 1px solid rgba(var(--gold-weak), .25); margin-top: .5rem; padding-top: .75rem; }
+  .modal-panel { border-radius: 0; max-height: 90vh; overflow-y: auto; }
+  @screen md { .modal-panel { border-radius: 1rem; } }
+  /* Stronger ambient shadow to add depth to the modal container */
+  .modal-panel { box-shadow: 0 40px 80px -40px rgba(0,0,0,.65); }
+  /* Button system: luxury + clarity */
+  .btn-base {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition duration-200 ease-soft select-none;
+  }
+  .btn-lg { @apply px-7 py-3 text-base; }
+  .btn-sm { @apply px-4 py-2 text-sm; }
+  .btn-icon svg { width: 1.05em; height: 1.05em; }
+  .btn-block { @apply w-full; }
+
+  .btn-primary {
+    @apply btn-base text-white;
+    background: linear-gradient(180deg, rgba(15,26,44,1), rgba(15,26,44,.92));
+    border: 1px solid rgba(var(--gold), .42);
+    box-shadow: 0 14px 28px -18px rgba(0,0,0,.65);
+  }
+  .btn-primary:hover { filter: brightness(1.04); }
+  .btn-primary:active { transform: translateY(0.5px); }
+  .btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(220,192,142,.5); }
+  .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+  .btn-secondary {
+    @apply btn-base text-white;
+    background: transparent;
+    border: 1px solid rgba(var(--gold), .55);
+  }
+  .btn-secondary:hover { background: rgba(220,192,142,.10); }
+  .btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(220,192,142,.45); }
+  .btn-secondary:disabled { opacity: .6; cursor: not-allowed; }
+
+  /* Back-compat aliases */
+  .btn-navy { @apply btn-primary; }
+  .btn-outline-gold { @apply btn-secondary; }
+
+  /* Legacy variants kept for compatibility (toned down) */
+  .btn { @apply btn-primary px-6 py-3 text-sm; }
+  .btn-gold { @apply btn-secondary; background: rgb(var(--gold)); color: #fff; border-color: transparent; }
+  .btn-outline-luxe {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border bg-transparent px-8 py-4 text-sm font-semibold transition duration-150 ease-soft;
+    border-color: rgb(var(--gold) / .60);
+    color: rgb(var(--ivory));
+  }
+  .btn-outline-luxe:hover { background: rgb(var(--gold) / .10); }
+  .btn-luxe { @apply btn-primary px-7 py-3 text-sm; }
+  .btn-luxe:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(220,192,142,.5); }
+
+  /* Navy panel: modern, deep navy with subtle sheen and gold hairline */
+  .panel-navy { position: relative; border-radius: 1.25rem; overflow: hidden; }
+  .panel-navy::before { content: ''; position: absolute; inset: 0; background:
+      linear-gradient(180deg, rgba(15,26,44,.92), rgba(15,26,44,.78));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .panel-navy::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,.06) 0%, transparent 35%, transparent 65%, rgba(255,255,255,.04) 100%);
+    mix-blend-mode: soft-light; }
+  .panel-navy > .panel__inner { position: relative; z-index: 1; padding: 1.75rem; border-radius: inherit;
+    border: 1px solid rgba(var(--gold), .22); box-shadow: 0 24px 48px -28px rgba(0,0,0,.55); }
+  @screen md { .panel-navy > .panel__inner { padding: 2.25rem; } }
+
+  /* Flat variant without gradient sheen or hairline */
+  .panel-navy--flat::before { background: rgba(15,26,44,.88); box-shadow: none; }
+  .panel-navy--flat::after { content: none; }
+  .panel-navy--flat > .panel__inner { border: none; }
+
+  /* RSVP choice circles — reduce click area to circle only */
+  .rsvp-choice {
+    @apply inline-grid h-10 px-6 place-items-center rounded-full border transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 text-sm;
+  }
+  .rsvp-choice--attend {
+    @apply text-white;
+    background: rgb(var(--royal));
+    border-color: rgba(220,192,142,.55);
+    box-shadow: 0 8px 16px -12px rgba(0,0,0,.65);
+  }
+  .rsvp-choice--decline {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(220,192,142,.45);
+  }
+  .rsvp-choice.is-active {
+    /* 選択中ははっきり金色背景に */
+    @apply text-white border-gold;
+    background: linear-gradient(180deg, rgb(var(--gold)), rgba(184,146,76,1));
+    box-shadow: 0 8px 18px -12px rgba(189,160,106,.65), inset 0 0 0 1px rgba(255,255,255,.18);
+  }
+  /* ダークモーダル内でも確実に反映 */
+  .letter--navy .rsvp-choice.is-active {
+    @apply text-white border-gold;
+    background: linear-gradient(180deg, rgb(var(--gold)), rgba(184,146,76,1));
+  }
+  .rsvp-choice__label { @apply text-sm font-semibold; }
+
+  /* Segmented control wrapper */
+  .choice-toggle { @apply inline-flex items-center rounded-full border border-[rgba(220,192,142,.5)] bg-white/90 p-1 shadow-sm; }
+  .choice-toggle .rsvp-choice { @apply h-9; }
+
+  .chip { /* keep AA contrast: ink text, gold frame */
+    @apply rounded-full border border-gold/40 bg-champagne/30 px-4 py-2 text-sm font-medium text-ink;
+  }
+
+  /* Luxe card with gradient border */
+  .luxe-card {
+    position: relative;
+    border-radius: 1.5rem;
+    padding: 0;
+    background: transparent;
+    box-shadow: 0 24px 48px -32px rgba(0,0,0,.55);
+    display: flex;
+    height: 100%;
+  }
+  .luxe-card__inner {
+    border-radius: 1.45rem;
+    background: linear-gradient(180deg, rgba(15,26,44,.82), rgba(15,26,44,.66));
+    backdrop-filter: blur(4px) saturate(110%);
+    border: 1px solid rgba(var(--gold), .18);
+    padding: 1.25rem; /* 余白は保持して可読性確保 */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+
+    /* Decorative divider under section headings */
+    .divider { /* thin gold rule under headings */
+      @apply mx-auto mt-2 h-[2px] w-12 rounded-full bg-gold;
+    }
+
+    /* Message card (letter-style) */
+  .message-card {
+    position: relative;
+    border-radius: 1.25rem;
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+    overflow: hidden;
+    z-index: 1; /* keep above background effects */
+  }
+  .message-card__inner {
+    position: relative;
+    z-index: 1; /* above shine layer */
+    padding: 1.25rem;
+  }
+    @screen md {
+      .message-card__inner { padding: 2rem; }
+    }
+  .message-card__stamp {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+      height: 48px;
+      width: 48px;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.6), transparent 55%), linear-gradient(135deg, rgba(var(--gold),.9), rgba(var(--champagne),.9));
+      box-shadow: 0 6px 16px rgba(212,175,55,.35);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 700;
+      font-size: .6rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+  .message-card__tape {
+    position: absolute;
+    left: 1rem;
+      top: -8px;
+      height: 28px;
+      width: 80px;
+      rotate: -6deg;
+      background: repeating-linear-gradient( 45deg, rgba(17,24,39,.08) 0 8px, rgba(17,24,39,.12) 8px 16px );
+      opacity: .35;
+      border-radius: .25rem;
+    z-index: 2;
+  }
+
+    /* Luxe enhancements and motion */
+    .message-card--lux {
+      box-shadow: 0 30px 60px -30px rgba(17,24,39,.45), 0 10px 25px -20px rgba(212,175,55,.35);
+      transform: translateZ(0);
+      will-change: transform, box-shadow;
+      animation: float-soft 8s ease-in-out infinite;
+    }
+    .message-card--lux .message-card__inner {
+      background: radial-gradient(ellipse at top right, rgba(255,255,255,.98), rgba(255,255,255,.92));
+      border: 1px solid rgba(var(--gold),.14);
+    }
+  .message-card__shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.55) 45%, transparent 60%);
+    transform: translateX(-150%);
+    animation: sweep 3.8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0; /* stay under content */
+  }
+  .message-card__stamp { animation: tilt 6s ease-in-out infinite; z-index: 2; }
+
+    @keyframes sweep {
+      0% { transform: translateX(-150%); }
+      60% { transform: translateX(150%); }
+      100% { transform: translateX(150%); }
+    }
+    @keyframes tilt {
+      0%, 100% { transform: rotate(-2deg) translateY(0); }
+      50% { transform: rotate(2deg) translateY(1px); }
+    }
+    @keyframes float-soft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Sparkles */
+    .sparkles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .sparkle {
+      position: absolute;
+      width: 6px; height: 6px; border-radius: 9999px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 60%);
+      box-shadow: 0 0 12px rgba(255,255,255,.65), 0 0 24px rgba(212,175,55,.35);
+      animation: twinkle 3.5s ease-in-out infinite;
+    }
+    .sparkle--gold { background: radial-gradient(circle at 30% 30%, #fff, rgba(189,160,106,.3) 60%); }
+    .sparkle--amber { background: radial-gradient(circle at 30% 30%, #fff, rgba(240,230,214,.3) 60%); }
+    @keyframes twinkle {
+      0%, 100% { opacity: .2; transform: translateY(0) scale(1); }
+      50% { opacity: .9; transform: translateY(-6px) scale(1.2); }
+    }
+
+    /* Letter-style container for RSVP */
+    .letter { /* モーダル内もフラットに */
+      position: relative;
+      border-radius: 1.25rem;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: hidden;
+    }
+    .letter__inner {
+      position: relative;
+      border-radius: 1.25rem;
+      /* 明るいカード（わずかにアイボリー寄りのグラデーションで高級感アップ） */
+      background:
+        radial-gradient(ellipse at top right, rgba(255,255,255,.98), rgba(248,246,241,.98));
+      color: rgb(var(--royal));
+      backdrop-filter: none;
+      padding: 1.25rem;
+      box-shadow: 0 30px 60px -30px rgba(17,24,39,.45);
+      border: 1px solid rgba(var(--gold), .25);
+    }
+    /* subtle inner rim for embossed paper feel */
+    .letter__inner::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -12px 24px rgba(0,0,0,.06), inset 0 0 0 1px rgba(255,255,255,.12); }
+
+    /* Navy variant for the letter (modern dark) */
+    .letter--navy .letter__inner {
+      background: linear-gradient(180deg, rgba(15,26,44,.95), rgba(15,26,44,.85));
+      color: #fff;
+      border: 1px solid rgba(var(--gold), .28);
+    }
+    .letter--navy .letter__inner::after { box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -12px 24px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.04); }
+    .letter--navy .letter__title { color: #fff; }
+    .letter--navy .letter__eyebrow { color: rgb(var(--champagne)); opacity: .95; }
+
+    /* Form fields on navy */
+    .letter--navy .field__label { @apply text-xs font-medium tracking-wide text-white/85; }
+    .letter--navy .field__control {
+      @apply border bg-white/5 text-white placeholder-white/40;
+      border-color: rgba(241,231,206,.35); /* champagne */
+    }
+    .letter--navy .field__control:focus { outline: none; box-shadow: 0 0 0 2px rgba(220,192,142,.45); }
+    .letter--navy .field__hint { @apply text-xs text-white/70; }
+
+    /* Choice toggle on navy */
+    .letter--navy .choice-toggle { @apply border bg-royal/60; border-color: rgba(220,192,142,.45); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
+    .letter--navy .rsvp-choice--decline { @apply border-gold/50 bg-royal/40 text-white/90 hover:bg-royal/50; }
+    @screen md {
+      .letter__inner { padding: 2rem; }
+    }
+    .letter__header {
+      text-align: center;
+      margin-bottom: .75rem;
+    }
+    .letter__eyebrow { @apply text-xs font-semibold uppercase tracking-[0.3em] text-gold; 
+      background: linear-gradient(180deg, #F7EFD8, #DCC08E 60%, #B8924C);
+      -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .letter__title { @apply mt-2 font-display text-2xl text-royal; }
+    .letter__divider {
+      @apply mx-auto mt-2 h-[2px] w-12 rounded-full bg-gold;
+    }
+    .letter__seal {
+      position: absolute;
+      top: -18px;
+      right: 22px;
+      height: 60px; width: 60px; border-radius: 9999px;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.5), transparent 55%), linear-gradient(135deg, rgba(var(--gold),.9), rgba(var(--champagne),.9));
+      box-shadow: none;
+      display: grid; place-items: center; color: white; font-weight: 800; font-size: .6rem; letter-spacing: .06em;
+      transform: rotate(-8deg);
+    }
+    .letter__seal::after {
+      content: 'RSVP';
+    }
+
+    /* Form field aesthetics inside letter */
+    .field { display: grid; gap: .35rem; }
+    /* ホワイトカード上に合わせたラベル色（ロイヤル系） */
+    .field__label { @apply text-xs font-medium tracking-wide text-royal/80; }
+    .field__control {
+      /* 白地の入力 + ロイヤル文字色 + 金のフォーカスリング */
+      @apply w-full rounded-xl border border-champagne/60 bg-white px-4 py-3 text-sm outline-none transition focus:ring-2 focus:ring-gold;
+      color: rgb(var(--royal));
+    }
+    .field__hint { @apply text-xs text-royal/60; }
+
+    /* Segmented choice container: refined glass with gold rim */
+    .choice-toggle { @apply inline-flex items-center rounded-full border border-[rgba(220,192,142,.5)] bg-white/90 p-1 shadow-sm; 
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.24), 0 12px 24px -18px rgba(0,0,0,.45);
+      backdrop-filter: blur(2px) saturate(120%);
+    }
+    .letter__seal img { width: 64%; height: 64%; object-fit: contain; opacity: .95; filter: drop-shadow(0 1px 1px rgba(0,0,0,.12)); }
+  
+  /* Counter blocks — modern, minimal (no frames) */
+  .counter { position: relative; }
+  .counter__inner { background: transparent; padding: .25rem .5rem; text-align: center; }
+  .counter__num {
+    font-size: clamp(2rem, 6vw, 3.6rem);
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    text-shadow: 0 3px 18px rgba(0,0,0,.55), 0 0 1px rgba(255,255,255,.28);
+    letter-spacing: .02em;
+  }
+  .counter__label { @apply mt-1 text-[11px] md:text-sm uppercase tracking-[0.25em] text-white/85; }
+
+  /* gold divider for headings */
+  .gold-underline { display: block; height: 2px; width: 56px; margin: .5rem auto 0; background: rgb(var(--gold)); border-radius: 9999px; }
+
+  /* soft fade-in utility for content blocks */
+  .fade-in-soft { opacity: 0; transform: translateY(8px); animation: fadeInSoft .9s ease-out .1s forwards; }
+  @keyframes fadeInSoft { to { opacity: 1; transform: translateY(0); } }
+
+  /* alerts for RSVP states (elegant) */
+  .alert { @apply rounded-xl border px-4 py-3 text-sm; }
+  .alert-ok { @apply border-gold/60 bg-gold/15 text-ink; color: #fff; }
+  .alert-error { @apply border-white/20 bg-white/10 text-ink; }
+
+  /* Center toast for transient feedback (e.g., draft saved) */
+  .toast-center {
+    @apply rounded-xl border border-[rgba(220,192,142,.45)] bg-royal/80 px-4 py-3 text-sm text-white shadow-xl backdrop-blur;
+    animation: toastPop 1.6s ease-in-out forwards;
+  }
+  @keyframes toastPop {
+    0% { opacity: 0; transform: translateY(8px) scale(.98); }
+    15% { opacity: 1; transform: translateY(0) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-4px) scale(.98); }
+  }
+}

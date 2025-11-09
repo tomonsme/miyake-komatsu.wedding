@@ -1,0 +1,18 @@
+{
+  "ritz-flowers": {
+    "desktop": [0.58, 0.52],
+    "mobile": [0.60, 0.48]
+  },
+  "ring-bouquet": {
+    "desktop": [0.90, 0.65],
+    "mobile": [0.88, 0.62]
+  },
+  "two": {
+    "desktop": [0.55, 0.42],
+    "mobile": [0.52, 0.38]
+  },
+  "ritz-lounge": {
+    "desktop": [0.50, 0.50],
+    "mobile": [0.50, 0.50]
+  }
+}

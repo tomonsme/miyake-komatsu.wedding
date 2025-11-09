@@ -1,0 +1,32 @@
+[
+  {
+    "name": "flowers",
+    "desktop": "public/ritz-flowers.png",
+    "mobile": "public/ritz-flowers.png",
+    "focus": { "desktop": [0.58, 0.52], "mobile": [0.60, 0.48] },
+    "safe": {
+      "desktop": [0.35, 0.35, 0.95, 0.80],
+      "mobile": [0.35, 0.30, 0.90, 0.85]
+    }
+  },
+  {
+    "name": "ring",
+    "desktop": "public/ring-bouquet.JPG",
+    "mobile": "public/ring-bouquet.JPG",
+    "focus": { "desktop": [0.90, 0.65], "mobile": [0.88, 0.62] },
+    "safe": {
+      "desktop": [0.70, 0.45, 0.98, 0.95],
+      "mobile": [0.65, 0.45, 0.98, 0.95]
+    }
+  },
+  {
+    "name": "two",
+    "desktop": "public/two.JPG",
+    "mobile": "public/two.JPG",
+    "focus": { "desktop": [0.55, 0.42], "mobile": [0.52, 0.38] },
+    "safe": {
+      "desktop": [0.12, 0.15, 0.88, 0.85],
+      "mobile": [0.10, 0.10, 0.90, 0.90]
+    }
+  }
+]
