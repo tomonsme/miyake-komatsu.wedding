@@ -5,7 +5,7 @@ export default defineAppConfig({
     brideName: '小松 美穂乃',
     eventDateIso: '2026-02-07',
     // RSVP deadline (ISO, shown as "YYYY年M月D日までに回答")
-    rsvpDeadlineIso: '2026-01-17',
+    rsvpDeadlineIso: '2026-01-07',
     venueName: '〒530-0001 大阪府大阪市北区梅田2丁目5-25',
     venueAddress: '〒530-0001 大阪府大阪市北区梅田2丁目5-25',
     // Show map label as リッツ・カールトン大阪 while keeping address text
@@ -18,6 +18,7 @@ export default defineAppConfig({
     groomPhotoUrl: '/groom.JPG',
     bridePhotoUrl: '/bride.JPG',
     ceremonyTime: '',
+    receptionOpenTime: '13:30',
     receptionTime: '14:00',
     message: `謹啓
 
@@ -43,5 +44,8 @@ export default defineAppConfig({
     ,
     // Optional overlay image for hero (now optimized WebP)
     welcomeOverlayUrl: '/welcome-overlay.webp'
+    ,
+    // Footer label (e.g., brand or couple name)
+    copyrightLabel: 'weddinginvitation-miyake-komatsu'
   }
 })

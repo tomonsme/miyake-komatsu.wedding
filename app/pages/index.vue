@@ -69,19 +69,19 @@
             :style="messageContentStyle"
           >
             <!-- 謹啓（左寄せ） -->
-            <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5">{{ parts.startLine }}</p>
+            <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5" v-html="widowSafe(parts.startLine)"></p>
 
             <!-- 本文（改行維持・中央寄せ） -->
             <div class="text-center message-paras">
-              <p v-for="(para, i) in bodyBlocks" :key="i" class="font-display leading-[2.2] md:leading-[2.7] tracking-normal text-royal/90" style="text-wrap: balance;">{{ para }}</p>
+              <p v-for="(para, i) in bodyBlocks" :key="i" class="font-display leading-[2.2] md:leading-[2.7] tracking-normal text-royal/90" style="text-wrap: balance; text-wrap: pretty;" v-html="widowSafe(para)"></p>
             </div>
 
             <!-- 謹白（右寄せ） -->
-            <p v-if="parts.endLine" class="font-display leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7">{{ parts.endLine }}</p>
+            <p v-if="parts.endLine" class="font-display leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7" v-html="widowSafe(parts.endLine)"></p>
 
             <!-- お名前（中央寄せ） -->
             <div v-if="parts.nameLines.length" class="mt-3 md:mt-4 text-center text-royal/90">
-              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display leading-relaxed tracking-normal">{{ nm }}</p>
+              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display leading-relaxed tracking-normal" v-html="widowSafe(nm)"></p>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@
     </section>
 
     <!-- Profile section (縦並び) -->
-    <section id="profile" class="mx-auto w-full max-w-screen-md scroll-mt-32 md:scroll-mt-24 px-6 py-20 md:py-28 snap-start min-h-[100svh] md:min-h-fit border-t border-gold/20">
+    <section id="profile" class="mx-auto w-full max-w-screen-md scroll-mt-32 md:scroll-mt-24 px-6 pt-12 pb-20 md:pt-16 md:pb-28 snap-start min-h-[100svh] md:min-h-fit border-t border-gold/20">
       <header class="mb-6 text-center">
         <h2 class="mt-0 text-2xl font-display tracking-wide text-gold uppercase foil-text">PROFILE</h2>
         <div class="my-2 flex items-center justify-center gap-8">
@@ -114,8 +114,8 @@
                 <p class="mt-1 text-xl md:text-2xl font-semibold font-serif leading-relaxed text-white/95">{{ groomName }}</p>
               </div>
             </div>
-            <p v-if="groomIntro" class="mt-3 text-sm leading-relaxed text-white/90">{{ groomIntro }}</p>
-            <p v-if="groomMessage" class="mt-3 whitespace-pre-line text-white/90">{{ groomMessage }}</p>
+            <p v-if="groomIntro" class="mt-3 text-sm leading-relaxed text-white/90 wrap-nice">{{ groomIntro }}</p>
+            <p v-if="groomMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice">{{ groomMessage }}</p>
           </div>
         </div>
 
@@ -131,8 +131,8 @@
                 <p class="mt-1 text-xl md:text-2xl font-semibold font-serif leading-relaxed text-white/95">{{ brideName }}</p>
               </div>
             </div>
-            <p v-if="brideIntro" class="mt-3 text-sm leading-relaxed text-white/90">{{ brideIntro }}</p>
-            <p v-if="brideMessage" class="mt-3 whitespace-pre-line text-white/90">{{ brideMessage }}</p>
+            <p v-if="brideIntro" class="mt-3 text-sm leading-relaxed text-white/90 wrap-nice">{{ brideIntro }}</p>
+            <p v-if="brideMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice">{{ brideMessage }}</p>
           </div>
         </div>
       </div>
@@ -172,7 +172,7 @@
       </div>
     </section>
 
-    <section id="events" class="mx-auto w-full max-w-screen-md scroll-mt-40 md:scroll-mt-28 px-6 py-20 md:py-28 snap-start snap-always border-t border-gold/20">
+    <section id="events" class="mx-auto w-full max-w-screen-md scroll-mt-40 md:scroll-mt-28 px-6 pt-12 pb-20 md:pt-16 md:pb-28 snap-start snap-always border-t border-gold/20">
       <header class="mb-6 text-center">
         <h2 class="mt-0 text-2xl font-display tracking-wide text-gold uppercase foil-text">INFORMATION</h2>
         <div class="my-2 flex items-center justify-center gap-8">
@@ -187,28 +187,28 @@
         <div class="luxe-card fade-in-soft">
           <div class="luxe-card__inner">
             <dl class="mx-auto grid max-w-md grid-cols-[7.5rem_1fr] md:grid-cols-[8.5rem_1fr] gap-y-3 gap-x-6 text-base md:text-lg">
-              <dt class="text-white/70 tracking-wide leading-snug">日　時</dt><dd class="text-white/90 leading-snug">{{ dateLabel }}</dd>
+              <dt class="text-white/70 tracking-wide leading-snug">日　時</dt><dd class="text-white/90 leading-snug nums-unified">{{ dateLabel }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
-              <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug">{{ receptionOpenTime || '—' }}</dd>
+              <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionOpenTime || '—' }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
               <template v-if="ceremonyTime">
                 <dt class="text-white/70 tracking-wide leading-snug">挙　式</dt>
-                <dd class="text-white/90 leading-snug font-display tabular-nums">{{ ceremonyTime }}</dd>
+                <dd class="text-white/90 leading-snug nums-unified">{{ ceremonyTime }}</dd>
                 <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
               </template>
-              <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt><dd class="text-white/90 leading-snug font-display tabular-nums">{{ receptionTime || '—' }}</dd>
+              <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionTime || '—' }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
-              <dt class="text-white/70 tracking-wide leading-snug">場　所</dt><dd class="text-white/90 leading-snug">{{ placeDisplay }}</dd>
+              <dt class="text-white/70 tracking-wide leading-snug">場　所</dt><dd class="text-white/90 leading-snug wrap-nice">{{ placeDisplay }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
               <dt class="text-white/70 tracking-wide leading-snug">住　所</dt>
-              <dd class="text-white/90 leading-snug">
+              <dd class="text-white/90 leading-snug nums-unified wrap-nice">
                 <template v-if="mapPlaceUrl">
                   <a :href="mapPlaceUrl" target="_blank" rel="noopener" class="underline decoration-[#DCC08E]/40 underline-offset-4 hover:text-[#DCC08E]">{{ venueAddress || '—' }}</a>
                 </template>
                 <template v-else>{{ venueAddress || '—' }}</template>
               </dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-3"></div>
-              <dt class="text-white/70 tracking-wide leading-snug">電話番号</dt><dd class="text-white/90 leading-snug">{{ venuePhoneDisplay }}</dd>
+              <dt class="text-white/70 tracking-wide leading-snug">電話番号</dt><dd class="text-white/90 leading-snug nums-unified">{{ venuePhoneDisplay }}</dd>
             </dl>
           </div>
         </div>
@@ -239,12 +239,19 @@
             <li>JR大阪駅 西改札口より徒歩4分</li>
             <li>大阪メトロ四ツ橋線 西梅田駅より徒歩5分</li>
             <li>阪神電鉄 大阪梅田駅より徒歩5分</li>
-            <li>JR新大阪駅より/約12分 JR東海道線にて「大阪駅」下車（西改札口より徒歩4分）</li>
+            <li>
+              <span>JR新大阪駅より/約12分 JR東海道線にて「大阪駅」下車</span>
+              <span class="block">（西改札口より徒歩4分）</span>
+            </li>
           </ul>
           <div class="mt-4 border-t border-champagne/50 pt-3">
             <p class="text-sm font-semibold text-white/90">駐車場のご案内</p>
-            <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください。優待券をご用意しておりますので、お引き上げの際に 2～4階のクロークスタッフへお申し出ください。</p>
-            <p class="mt-1 text-xs text-white/70">※ 収容台数に限りがございます。混雑時は周辺駐車場をご案内する場合がございます。※ ご宿泊者様は別途2,000円にて承ります。</p>
+            <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください。</p>
+            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので、お引き上げの際に 2～4階のクロークスタッフへお申し出ください。</p>
+            <ul class="mt-1 pl-5 text-xs text-white/70 list-disc space-y-1">
+              <li>収容台数に限りがございます。</li>
+              <li>混雑時は周辺駐車場をご案内する場合がございます。</li>
+            </ul>
           </div>
         </div></div>
       </div>
@@ -254,7 +261,7 @@
 
     <!-- ご案内セクションは不要のため削除し、駐車場はAccessへ移設 -->
 
-    <section id="rsvp" class="mx-auto w-full max-w-screen-md scroll-mt-40 md:scroll-mt-28 px-6 py-20 md:py-28 snap-start snap-always border-t border-gold/20">
+    <section id="rsvp" class="mx-auto w-full max-w-screen-md scroll-mt-40 md:scroll-mt-28 px-6 pt-10 pb-8 md:pt-14 md:pb-12 snap-start snap-always border-t border-gold/20">
       <!-- Section header aligned with other sections -->
       <header class="mb-6 text-center">
         <h2 class="mt-0 text-2xl font-display tracking-wide text-gold uppercase foil-text">RSVP</h2>
@@ -267,16 +274,14 @@
       </header>
 
       <div class="panel-navy panel-navy--flat fade-in-soft mx-auto max-w-lg">
-        <div class="panel__inner text-center">
-          <p class="text-sm leading-relaxed text-white/90">
-            お手数ではございますが、下記の期日までに<br/>
-            出欠のご回答をお願い申し上げます。
+        <div class="panel__inner text-center pt-4 pb-2 md:pt-6 md:pb-3">
+          <p class="text-sm leading-relaxed text-white/90 wrap-nice" v-html="widowSafe('ご多用のところ誠に恐れ入りますが、下記の期日までにご出欠の旨をご登録くださいますようお願い申し上げます。')"></p>
+          <p v-if="hasValidDate" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
+            <span class="text-white/65 tracking-wide">ご回答期限：</span>
+            <span class="ml-1 nums-unified text-lg text-gold">{{ rsvpDateHuman }}</span>
+            <span class="ml-1">まで</span>
           </p>
-          <p v-if="hasValidDate" class="mt-3 text-sm leading-relaxed">
-            <span class="text-white/65 tracking-wide">ご回答期限</span>
-            <span class="ml-2 font-display text-lg text-gold">{{ rsvpDateHuman }}</span>
-          </p>
-          <button type="button" class="btn-outline-luxe btn-lg btn-icon mt-6" @click="openRsvp()" aria-label="ご出欠のご回答フォームを開く">
+          <button type="button" class="btn-callout btn-lg btn-icon mt-3" @click="openRsvp()" aria-label="ご出欠のご回答フォームを開く">
             招待状に回答する
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
@@ -690,7 +695,7 @@ const displayCouple = (invitation.couple && invitation.couple.trim())
 // Short intros and messages (customizable via app.config.ts)
 const groomIntro = (invitation.groomIntro || '').trim()
 const brideIntro = (invitation.brideIntro || '').trim()
-const groomMessage = (invitation.groomMessage || '本日はお越しいただきありがとうございます。ささやかではございますが、感謝の気持ちを込めておもてなしさせていただきます。').trim()
+const groomMessage = (invitation.groomMessage || '日頃のご厚情に深く感謝申し上げます。当日は心を込めてお迎えいたします。').trim()
 const brideMessage = (invitation.brideMessage || '皆さまと素敵な時間を過ごせることを楽しみにしております。今後ともどうぞよろしくお願いいたします。').trim()
 
 // Optional times (if set in app.config.ts)
@@ -736,22 +741,19 @@ const displayDateParts = computed(() => {
   return { date: `${y}.${m}.${day}`, dow: `${dow}.` }
 })
 
-// RSVP deadline label: prefer invitation.rsvpDeadlineIso if provided
+// RSVP deadline label (date only). Prefer invitation.rsvpDeadlineIso; fallback to event date.
 const rsvpDateHuman = computed(() => {
   const deadlineIso = (invitation as any).rsvpDeadlineIso as string | undefined
-  if (deadlineIso) {
-    const d = parseLocalDate(deadlineIso)
-    if (d && !Number.isNaN(d.getTime())) {
-      const y = d.getFullYear()
-      const m = d.getMonth() + 1
-      const day = d.getDate()
-      return `${y}年${m}月${day}日までに回答`
-    }
+  const make = (d: Date | null) => {
+    if (!d || Number.isNaN(d.getTime())) return ''
+    const y = d.getFullYear()
+    const m = d.getMonth() + 1
+    const day = d.getDate()
+    return `${y}年${m}月${day}日`
   }
-  // Fallback to event date in original style (YYYY.MM.DD Ddd.)
-  const p = displayDateParts.value as any
-  if (!p?.date) return ''
-  return `${p.date} ${p.dow}`
+  if (deadlineIso) return make(parseLocalDate(deadlineIso))
+  // Fallback: use event date
+  return make(parseLocalDate(invitation.eventDateIso || DEFAULT_EVENT_DATE))
 })
 
 const publicConfig = useRuntimeConfig().public
@@ -1031,6 +1033,19 @@ onBeforeUnmount(() => {
 watch(messageDisplay, () => {
   nextTick(() => updateMessageFit())
 })
+
+// Keep at least N chars on the last line to avoid awkward short lines (JP widows)
+function widowSafe(text: string, min: number = 5) {
+  try {
+    const chars = Array.from((text || '').toString())
+    if (chars.length <= min) return text
+    const head = chars.slice(0, -min).join('')
+    const tail = chars.slice(-min).join('')
+    return `${head}<span class="nowrap-chunk">${tail}</span>`
+  } catch {
+    return text
+  }
+}
 
 // Optional photo upload (任意)
 const photoFiles = ref<File[]>([])

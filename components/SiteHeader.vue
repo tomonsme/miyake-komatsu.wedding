@@ -1,13 +1,14 @@
 <template>
   <header
+    ref="rootHeader"
     class="sticky top-0 z-40 w-full border-b border-champagne/40 bg-royal/85 backdrop-blur transition-colors duration-300"
     :class="{ 'bg-royal/95 border-champagne/60': scrolled }"
   >
-    <div class="mx-auto grid max-w-screen-lg grid-cols-3 items-center px-4 py-3">
+    <div class="mx-auto grid max-w-screen-lg grid-cols-3 items-center px-4 h-14">
       <div class="hidden md:block"></div> <!-- spacer to center brand on md+ -->
       <NuxtLink to="/" class="justify-self-center flex items-center gap-2">
         <img src="/favicon.png" alt="logo" class="h-6 w-6" />
-        <span class="font-display text-lg tracking-wide text-white text-shadow-soft uppercase">Invitation</span>
+        <span class="font-display text-lg leading-none tracking-wide text-white text-shadow-soft uppercase">Invitation</span>
       </NuxtLink>
 
       <div class="flex items-center justify-end">
@@ -20,7 +21,7 @@
             }"
           >{{ item.label }}</NuxtLink>
         </nav>
-        <button class="fixed right-2.5 top-2.5 z-[75] grid h-10 w-10 place-items-center rounded-full bg-black/35 text-white shadow-sm backdrop-blur-sm ring-1 ring-white/35 hover:bg-black/45 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold" @click="toggle()" :aria-expanded="open" aria-label="menu" aria-controls="mobile-menu">
+        <button class="fixed right-2.5 z-[75] grid h-10 w-10 place-items-center rounded-full bg-black/35 text-white shadow-sm backdrop-blur-sm ring-1 ring-white/35 hover:bg-black/45 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold" :style="hamburgerStyle" @click="toggle()" :aria-expanded="open" aria-label="menu" aria-controls="mobile-menu">
           <svg v-if="!open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -60,6 +61,8 @@
 const open = ref(false)
 const progress = ref(0) // scroll progress 0..1
 const scrolled = ref(false)
+const rootHeader = ref<HTMLElement | null>(null)
+const hamburgerStyle = ref<Record<string, string>>({ top: '10px' })
 function toggle(){ open.value = !open.value }
 function go(hash: string){
   open.value = false
@@ -110,8 +113,16 @@ onMounted(() => {
   const onScrollHeader = () => {
     scrolled.value = window.scrollY > 8
   }
+  const updateHamburgerTop = () => {
+    const h = rootHeader.value?.offsetHeight ?? 56
+    const btnHalf = 20 // h-10
+    const t = Math.max(6, Math.round(h / 2 - btnHalf))
+    hamburgerStyle.value = { top: t + 'px' }
+  }
   onScroll()
+  updateHamburgerTop()
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('scroll', onScrollHeader, { passive: true })
+  window.addEventListener('resize', updateHamburgerTop, { passive: true })
 })
 </script>

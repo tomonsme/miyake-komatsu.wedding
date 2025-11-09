@@ -229,6 +229,53 @@
   .btn-luxe { @apply btn-primary px-7 py-3 text-sm; }
   .btn-luxe:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(220,192,142,.5); }
 
+  /* Callout button with subtle glow + sweep */
+  .btn-callout {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 font-semibold text-white transition duration-200 ease-soft;
+    background: linear-gradient(180deg, rgba(15,26,44,1), rgba(15,26,44,.92));
+    border: 1px solid rgba(var(--gold), .75);
+    box-shadow:
+      0 10px 24px -12px rgba(212,175,55,.45), /* outer gold glow */
+      inset 0 0 0 1px rgba(255,255,255,.08);   /* inner hairline */
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-callout::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.35) 46%, transparent 60%);
+    transform: translateX(-160%);
+    animation: sweep-btn 2.8s ease-in-out infinite;
+  }
+  .btn-callout:hover {
+    box-shadow:
+      0 12px 30px -12px rgba(212,175,55,.55),
+      inset 0 0 0 1px rgba(255,255,255,.12);
+    filter: brightness(1.04);
+  }
+  @keyframes sweep-btn {
+    0% { transform: translateX(-160%); }
+    55% { transform: translateX(160%); }
+    100% { transform: translateX(160%); }
+  }
+
+  /* Keep at least N chars together at line end (used via wrapping last N in span) */
+  .nowrap-chunk { white-space: nowrap; }
+
+  /* Unified numeric style for information fields */
+  .nums-unified {
+    font-family: "Noto Serif JP", serif; /* avoid Latin/Japanese mix baseline shift */
+    font-variant-numeric: lining-nums tabular-nums; /* align width + baseline */
+  }
+
+  /* Nice line breaking for JP: balance + pretty with strict line-break rules */
+  .wrap-nice {
+    line-break: strict;
+    word-break: normal; /* allow natural CJK wrapping */
+    text-wrap: balance;
+    text-wrap: pretty;
+  }
+
   /* Navy panel: modern, deep navy with subtle sheen and gold hairline */
   .panel-navy { position: relative; border-radius: 1.25rem; overflow: hidden; }
   .panel-navy::before { content: ''; position: absolute; inset: 0; background:
