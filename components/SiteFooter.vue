@@ -6,7 +6,7 @@
         <img v-if="monogramUrl" :src="monogramUrl" alt="monogram" class="h-7 w-auto opacity-90" loading="lazy" />
         <span class="mt-2 block h-px w-14 bg-[#DCC08E]/50"></span>
         <!-- Mobile: keep Invitation title and tagline visible in compact style -->
-        <h3 class="mt-2 font-display text-base tracking-wide text-white">Invitation</h3>
+        <h3 class="mt-2 font-display text-base tracking-wide text-gold">Invitation</h3>
         <LeafDivider />
         <p class="mt-1 text-xs leading-relaxed text-white/80 text-center">大切なゲストのみなさまへ。心を込めて。</p>
       </div>
@@ -14,16 +14,16 @@
       <!-- Desktopも中央縦積み（全ブロック中央寄せ） -->
       <div class="mx-auto max-w-screen-md grid gap-6 justify-items-center text-center">
         <div class="max-w-prose mx-auto hidden md:block">
-          <h3 class="font-display text-lg tracking-wide text-white">Invitation</h3>
+          <h3 class="font-display text-lg tracking-wide text-gold">Invitation</h3>
           <LeafDivider />
           <p class="mt-2 text-sm leading-relaxed text-white/80">大切なゲストのみなさまへ。心を込めて。</p>
         </div>
         <div class="max-w-prose mx-auto">
           <h4 class="hidden md:block text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70">Links</h4>
-          <ul class="mt-0 md:mt-2 flex justify-center gap-4 text-sm text-white/80">
-            <li><a href="/#message" @click.prevent="go('#message')" class="hover:underline underline-offset-4 hover:text-white">Message</a></li>
-            <li><a href="/#events" @click.prevent="go('#events')" class="hover:underline underline-offset-4 hover:text-white">Information</a></li>
-            <li><a href="/#rsvp" @click.prevent="go('#rsvp')" class="hover:underline underline-offset-4 hover:text-white">RSVP</a></li>
+          <ul class="mt-0 md:mt-2 flex justify-center gap-4 text-sm">
+            <li><a href="/#message" @click.prevent="go('#message')" class="text-gold hover:opacity-90 underline-offset-4 hover:underline">Message</a></li>
+            <li><a href="/#events" @click.prevent="go('#events')" class="text-gold hover:opacity-90 underline-offset-4 hover:underline">Information</a></li>
+            <li><a href="/#rsvp" @click.prevent="go('#rsvp')" class="text-gold hover:opacity-90 underline-offset-4 hover:underline">RSVP</a></li>
           </ul>
         </div>
         <div class="max-w-prose mx-auto">

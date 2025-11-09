@@ -247,7 +247,7 @@
           <div class="mt-4 border-t border-champagne/50 pt-3">
             <p class="text-sm font-semibold text-white/90">駐車場のご案内</p>
             <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください。</p>
-            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので、お引き上げの際に 2～4階のクロークスタッフへお申し出ください。</p>
+            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので、お引き上げの際はクロークスタッフへお申し出ください。</p>
             <ul class="mt-1 pl-5 text-xs text-white/70 list-disc space-y-1">
               <li>収容台数に限りがございます。</li>
               <li>混雑時は周辺駐車場をご案内する場合がございます。</li>
