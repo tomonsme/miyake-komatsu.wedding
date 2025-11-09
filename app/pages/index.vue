@@ -240,8 +240,8 @@
             <li>大阪メトロ四ツ橋線 西梅田駅より徒歩5分</li>
             <li>阪神電鉄 大阪梅田駅より徒歩5分</li>
             <li>
-              <span>JR新大阪駅より/約12分 JR東海道線にて「大阪駅」下車</span>
-              <span class="block">（西改札口より徒歩4分）</span>
+              <span>JR新大阪駅から 約12分（JR東海道線）</span>
+              <span class="block text-xs text-white/65">大阪駅（西改札口）より徒歩4分</span>
             </li>
           </ul>
           <div class="mt-4 border-t border-champagne/50 pt-3">
@@ -1017,16 +1017,22 @@ onMounted(() => {
   updateLetterBoxMinHeight()
   // Run after layout settles
   setTimeout(updateMessageFit, 0)
-  window.addEventListener('resize', updateLetterBoxMinHeight, { passive: true })
-  ;(window as any).visualViewport?.addEventListener?.('resize', updateLetterBoxMinHeight, { passive: true })
-  window.addEventListener('resize', updateMessageFit, { passive: true })
-  ;(window as any).visualViewport?.addEventListener?.('resize', updateMessageFit, { passive: true })
+  // Avoid jank on mobile when URL bar shows/hides: only recompute on width changes or orientation change
+  let lastW = window.innerWidth
+  const onResizeStable = () => {
+    const w = window.innerWidth
+    if (Math.abs(w - lastW) < 2) return
+    lastW = w
+    updateLetterBoxMinHeight()
+    updateMessageFit()
+  }
+  window.addEventListener('resize', onResizeStable, { passive: true })
+  window.addEventListener('orientationchange', () => setTimeout(() => { updateLetterBoxMinHeight(); updateMessageFit() }, 60), { passive: true })
+  ;(window as any).__onResizeStable = onResizeStable
 })
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateLetterBoxMinHeight)
-  ;(window as any).visualViewport?.removeEventListener?.('resize', updateLetterBoxMinHeight)
-  window.removeEventListener('resize', updateMessageFit)
-  ;(window as any).visualViewport?.removeEventListener?.('resize', updateMessageFit)
+  const onResizeStable = (window as any).__onResizeStable
+  if (onResizeStable) window.removeEventListener('resize', onResizeStable)
 })
 
 // Recompute scale when message content changes
