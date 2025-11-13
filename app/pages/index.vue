@@ -695,8 +695,8 @@ const displayCouple = (invitation.couple && invitation.couple.trim())
 // Short intros and messages (customizable via app.config.ts)
 const groomIntro = (invitation.groomIntro || '').trim()
 const brideIntro = (invitation.brideIntro || '').trim()
-const groomMessage = (invitation.groomMessage || '日頃のご厚情に深く感謝申し上げます。当日は心を込めてお迎えいたします。').trim()
-const brideMessage = (invitation.brideMessage || '皆さまと素敵な時間を過ごせることを楽しみにしております。今後ともどうぞよろしくお願いいたします。').trim()
+const groomMessage = (invitation.groomMessage || '日頃のご厚情に感謝しつつ、ささやかながら感謝をお伝えする一日にできればと思っています。お時間が許せばぜひご参列ください！').trim()
+const brideMessage = (invitation.brideMessage || '大好きな皆さまと、素敵な時間を過ごせることを楽しみにしております！日々大感謝！').trim()
 
 // Optional times (if set in app.config.ts)
 const ceremonyTime = (invitation as any).ceremonyTime || ''
