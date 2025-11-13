@@ -589,4 +589,17 @@
     80% { opacity: 1; }
     100% { opacity: 0; transform: translateY(-4px) scale(.98); }
   }
+
+  /* During active scroll, disable backdrop blur to prevent text shimmer */
+  html.is-scrolling .backdrop-blur,
+  html.is-scrolling .backdrop-blur-sm,
+  html.is-scrolling .backdrop-blur-md,
+  html.is-scrolling .backdrop-blur-lg,
+  html.is-scrolling .luxe-card__inner,
+  html.is-scrolling header.sticky,
+  html.is-scrolling .choice-toggle,
+  html.is-scrolling .toast-center {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 }

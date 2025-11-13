@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-royal snap-y snap-mandatory md:snap-none"> <!-- 深い青の背景に統一／モバイルはブロック風スクロール -->
+  <main class="min-h-screen bg-royal"> <!-- 深い青の背景に統一 -->
     <section class="relative bg-royal text-white snap-start">
       <!-- Image frame: leave space below for date/names -->
       <div class="relative h-[62svh] sm:h-[66svh] md:h-auto md:aspect-[21/9] max-h-[800px] overflow-hidden grain">

@@ -15,6 +15,17 @@ import SiteHeader from '../components/SiteHeader.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 
 onMounted(() => {
+  // Add/remove a flag on <html> while scrolling to relax heavy effects
+  let scrollTimer: number | null = null
+  const onScrollActive = () => {
+    document.documentElement.classList.add('is-scrolling')
+    if (scrollTimer) window.clearTimeout(scrollTimer)
+    scrollTimer = window.setTimeout(() => {
+      document.documentElement.classList.remove('is-scrolling')
+      scrollTimer = null
+    }, 140)
+  }
+
   const nodes = Array.from(document.querySelectorAll('section')) as HTMLElement[]
   const set = new Set<HTMLElement>()
   const io = new IntersectionObserver((entries) => {
@@ -30,5 +41,7 @@ onMounted(() => {
     n.classList.add('reveal')
     io.observe(n)
   })
+
+  window.addEventListener('scroll', onScrollActive, { passive: true })
 })
 </script>

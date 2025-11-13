@@ -1,7 +1,7 @@
 <template>
   <header
     ref="rootHeader"
-    class="sticky top-0 z-40 w-full border-b border-champagne/40 bg-royal/85 backdrop-blur transition-colors duration-300"
+    class="sticky top-0 z-40 w-full border-b border-champagne/40 bg-royal/85 transition-colors duration-300"
     :class="{ 'bg-royal/95 border-champagne/60': scrolled }"
   >
     <div class="mx-auto grid max-w-screen-lg grid-cols-3 items-center px-4 h-14">
@@ -21,7 +21,7 @@
             }"
           >{{ item.label }}</NuxtLink>
         </nav>
-        <button class="fixed right-2.5 z-[75] grid h-10 w-10 place-items-center rounded-full bg-black/35 text-white shadow-sm backdrop-blur-sm ring-1 ring-white/35 hover:bg-black/45 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold" :style="hamburgerStyle" @click="toggle()" :aria-expanded="open" aria-label="menu" aria-controls="mobile-menu">
+        <button class="fixed right-2.5 z-[75] grid h-10 w-10 place-items-center rounded-full bg-black/35 text-white shadow-sm ring-1 ring-white/35 hover:bg-black/45 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold" :style="hamburgerStyle" @click="toggle()" :aria-expanded="open" aria-label="menu" aria-controls="mobile-menu">
           <svg v-if="!open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -30,7 +30,7 @@
     <!-- Mobile overlay menu -->
     <div v-if="open" id="mobile-menu" class="fixed inset-0 z-[70] md:hidden">
       <!-- dim background clickable to close -->
-      <div class="absolute inset-0 bg-royal backdrop-blur-sm" @click="toggle" aria-hidden="true"></div>
+      <div class="absolute inset-0 bg-royal/95" @click="toggle" aria-hidden="true"></div>
       <!-- panel -->
       <div class="absolute inset-x-0 top-0 mx-auto max-w-screen-sm rounded-b-3xl bg-royal shadow-lg ring-1 ring-white/20">
         <div class="relative px-4 pb-6 pt-16">
