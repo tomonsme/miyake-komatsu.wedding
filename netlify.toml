@@ -1,6 +1,8 @@
 [build]
   command = "npm run build"
-  publish = ".output/public"
+  # Nuxt 4 + Nitro preset `netlify` outputs static assets to `dist`
+  # so Netlify should publish the `dist` directory.
+  publish = "dist"
 
 [functions]
   directory = ".netlify/functions-internal"
