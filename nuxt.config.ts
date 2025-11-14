@@ -49,6 +49,8 @@ export default defineNuxtConfig({
     rsvpMode: process.env.RSVP_MODE || 'google',
     supabaseUrl: process.env.SUPABASE_URL || '',
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+    // Server-side only; do not expose publicly
+    supabaseServiceRole: process.env.SUPABASE_SERVICE_ROLE || '',
     googleFormEmbedUrl: process.env.GOOGLE_FORM_EMBED_URL || '',
     ownAssets: process.env.OWN_ASSETS === 'true',
     // Private email config (server only)
@@ -63,8 +65,15 @@ export default defineNuxtConfig({
     }
   },
   routeRules: process.env.NODE_ENV === 'production'
-    ? { '/**': { swr: true } }
-    : {},
+    ? {
+        '/**': { swr: true },
+        '/api/**': { swr: false, cache: false, headers: { 'cache-control': 'no-store' } },
+        '/admin': { headers: { 'x-robots-tag': 'noindex, nofollow' } }
+      }
+    : {
+        '/api/**': { swr: false, cache: false, headers: { 'cache-control': 'no-store' } },
+        '/admin': { headers: { 'x-robots-tag': 'noindex, nofollow' } }
+      },
   image: {
     domains: [],
     presets: {

@@ -10,6 +10,7 @@ interface RsvpPayload {
 }
 
 export default defineEventHandler(async (event) => {
+  setHeader(event, 'Cache-Control', 'no-store')
   const config = useRuntimeConfig(event)
 
   if (config.rsvpMode !== 'supabase') {
@@ -22,11 +23,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 422, statusMessage: 'Missing required fields.' })
   }
 
-  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+  if (!config.supabaseUrl || (!config.supabaseAnonKey && !(config as any).supabaseServiceRole)) {
     throw createError({ statusCode: 500, statusMessage: 'Supabase configuration is incomplete.' })
   }
 
-  const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey, {
+  const supabaseKey = ((config as any).supabaseServiceRole as string) || config.supabaseAnonKey
+  const supabase = createClient(config.supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
   })
 

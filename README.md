@@ -1,6 +1,6 @@
-# Nuxt Minimal Starter
+# Wedding Invitation (Nuxt)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This is a Nuxt-based wedding invitation site with RSVP and optional photo uploads. It supports two operation modes: Google Form (quick) or Supabase (centralized with admin view).
 
 ## Setup
 
@@ -72,4 +72,32 @@ yarn preview
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Deployment (Netlify)
+
+Already configured via `netlify.toml`.
+
+- Build command: `npm run build`
+- Publish directory: `.output/public`
+- Functions directory: auto (SSR via `/.netlify/functions-internal`)
+
+### Environment variables
+Choose one of the modes:
+
+- Google Form mode
+  - `RSVP_MODE=google`
+  - `GOOGLE_FORM_EMBED_URL=<Google Form embed URL>`
+
+- Supabase mode (recommended for centralized management)
+  - `RSVP_MODE=supabase`
+  - `SUPABASE_URL`, `SUPABASE_ANON_KEY`
+  - `SUPABASE_SERVICE_ROLE` (server only; recommended)
+  - `ADMIN_TOKEN=<any secret>` to access `/admin`
+  - Optional AWS SES: `SES_REGION`, `SES_FROM`, `SES_TO`, `SES_REPLY_TO`
+
+### Supabase setup
+- Create a public bucket `guest-photos` (Storage)
+- Create the table using `scripts/supabase.sql`
+- If you keep RLS enabled (default), setting `SUPABASE_SERVICE_ROLE` lets the server bypass policies safely.
+
+### Admin
+- Visit `/admin` and enter `ADMIN_TOKEN` to list RSVPs and export CSV.

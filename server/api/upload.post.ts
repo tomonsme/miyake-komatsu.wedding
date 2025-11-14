@@ -2,12 +2,13 @@ import { createClient } from '@supabase/supabase-js'
 import { randomUUID } from 'node:crypto'
 
 export default defineEventHandler(async (event) => {
+  setHeader(event, 'Cache-Control', 'no-store')
   const config = useRuntimeConfig(event)
 
   if (config.rsvpMode !== 'supabase') {
     throw createError({ statusCode: 400, statusMessage: 'Upload requires RSVP_MODE=supabase' })
   }
-  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+  if (!config.supabaseUrl || (!config.supabaseAnonKey && !(config as any).supabaseServiceRole)) {
     throw createError({ statusCode: 500, statusMessage: 'Supabase configuration is incomplete.' })
   }
 
@@ -16,7 +17,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'No files received.' })
   }
 
-  const supabase = createClient(config.supabaseUrl, config.supabaseAnonKey, { auth: { persistSession: false } })
+  const supabaseKey = ((config as any).supabaseServiceRole as string) || config.supabaseAnonKey
+  const supabase = createClient(config.supabaseUrl, supabaseKey, { auth: { persistSession: false } })
   const bucket = 'guest-photos'
   const now = new Date()
   const y = now.getFullYear()
@@ -47,4 +49,3 @@ export default defineEventHandler(async (event) => {
 
   return { urls }
 })
-
