@@ -1,29 +1,7 @@
 [build]
   command = "npm run build"
-  # Nuxt 4 + Nitro preset `netlify` outputs static assets to `dist`
-  # so Netlify should publish the `dist` directory.
   publish = "dist"
 
-[functions]
-  directory = ".netlify/functions-internal"
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/server"
-  status = 200
-
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    cache-control = "no-store"
-
-[[headers]]
-  for = "/admin"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+  # For Nuxt 4 + Nitro preset `netlify`, functions and routing
+  # are configured automatically via `.netlify/functions-internal/server`.
+  # No manual `functions` / `redirects` block is needed.
