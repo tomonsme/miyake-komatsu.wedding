@@ -8,7 +8,8 @@
     >
       <h1 class="font-display text-3xl text-ink">Thank You</h1>
       <p class="mt-4 text-sm leading-relaxed text-ink/70">
-        ご回答ありがとうございました。お会いできる日を心より楽しみにしています。
+        ご回答ありがとうございました<br>
+        お会いできる日を 心より楽しみにしております
       </p>
       <NuxtLink to="/" class="btn mt-8">トップへ戻る</NuxtLink>
     </Motion>

@@ -94,7 +94,7 @@ async function load(){
     const { data, error } = await useFetch('/api/admin/rsvps', { headers: { Authorization: `Bearer ${token.value}` } })
     if (error.value) throw error.value
     if ((data.value as any)?.mode === 'google') {
-      notice.value = '現在RSVP_MODE=googleのため、Googleフォームのスプレッドシートをご確認ください。'
+      notice.value = '現在 RSVP_MODE=google のため Googleフォームのスプレッドシートをご確認ください'
       rows.value = []
       return
     }

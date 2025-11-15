@@ -73,7 +73,13 @@
 
             <!-- 本文（改行維持・中央寄せ） -->
             <div class="text-center message-paras">
-              <p v-for="(para, i) in bodyBlocks" :key="i" class="font-display leading-[2.2] md:leading-[2.7] tracking-normal text-royal/90" style="text-wrap: balance; text-wrap: pretty;" v-html="widowSafe(para)"></p>
+              <p
+                v-for="(para, i) in bodyBlocks"
+                :key="i"
+                class="font-display leading-[1.9] md:leading-[2.3] tracking-normal text-royal/90"
+                style="text-wrap: balance; text-wrap: pretty;"
+                v-html="widowSafe(para)"
+              ></p>
             </div>
 
             <!-- 謹白（右寄せ） -->
@@ -246,11 +252,11 @@
           </ul>
           <div class="mt-4 border-t border-champagne/50 pt-3">
             <p class="text-sm font-semibold text-white/90">駐車場のご案内</p>
-            <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください。</p>
-            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので、お引き上げの際はクロークスタッフへお申し出ください。</p>
+            <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください</p>
+            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので お引き上げの際はクロークスタッフへお申し出ください</p>
             <ul class="mt-1 pl-5 text-xs text-white/70 list-disc space-y-1">
-              <li>収容台数に限りがございます。</li>
-              <li>混雑時は周辺駐車場をご案内する場合がございます。</li>
+              <li>収容台数に限りがございます</li>
+              <li>混雑時は周辺駐車場をご案内する場合がございます</li>
             </ul>
           </div>
         </div></div>
@@ -275,7 +281,7 @@
 
       <div class="panel-navy panel-navy--flat fade-in-soft mx-auto max-w-lg">
         <div class="panel__inner text-center pt-4 pb-2 md:pt-6 md:pb-3">
-          <p class="text-sm leading-relaxed text-white/90 wrap-nice" v-html="widowSafe('ご多用のところ誠に恐れ入りますが、下記の期日までにご出欠の旨をご登録くださいますようお願い申し上げます。')"></p>
+          <p class="text-sm leading-relaxed text-white/90 wrap-nice" v-html="widowSafe('ご多用のところ 誠に恐れ入りますが 下記の期日までに ご出欠の旨をご登録くださいますようお願い申し上げます')"></p>
           <p v-if="hasValidDate" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
             <span class="text-white/65 tracking-wide">ご回答期限：</span>
             <span class="ml-1 nums-unified text-lg text-gold">{{ rsvpDateHuman }}</span>
@@ -400,11 +406,11 @@
                 <label class="field">
                   <span class="field__label">メッセージ（任意）</span>
                   <textarea v-model="form.message" rows="3" class="field__control" placeholder="ご要望などございましたらご自由にお書きください"></textarea>
-                  <span class="field__hint">送信後の変更も承ります。ご遠慮なくお知らせください。</span>
+                  <span class="field__hint">送信後の変更も承ります ご遠慮なくお知らせください</span>
                 </label>
 
                 <div class="grid gap-2">
-                  <span class="field__label">写真の共有（任意、最大10枚・各10MBまで）</span>
+                  <span class="field__label">写真の共有（任意 最大10枚・各10MBまで）</span>
                   <div class="flex flex-wrap gap-2">
                     <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-champagne/60 bg-white/5 px-4 py-3 text-sm text-white/85 hover:bg-white/10">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -420,12 +426,12 @@
                       </button>
                     </div>
                   </div>
-                  <span class="field__hint">ご提供いただいた写真は、当日のスライド等に使用させていただく場合がございます。</span>
+                  <span class="field__hint">ご提供いただいた写真は 当日のスライド等に使用させていただく場合がございます</span>
                 </div>
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
                   <div class="order-2 md:order-2">
-                    <p class="text-xs text-white/70">ご返信期日: 披露宴の1ヶ月前までを目安にお願いいたします。</p>
+                    <p class="text-xs text-white/70">ご返信期日: 披露宴の1ヶ月前までを目安にお願いいたします</p>
                     <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
                   </div>
                   <div class="order-1 md:order-1 flex w-full justify-center flex-col gap-2 sm:flex-row md:w-auto">
@@ -437,7 +443,7 @@
               <!-- 欠席の場合は誤操作防止の確定を要求 -->
               <template v-else-if="form.attendance === 'declining'">
                 <div class="mx-auto max-w-sm space-y-4 text-center">
-                  <p class="text-sm text-white/85">誤操作防止のため、確認の上で確定してください。</p>
+                  <p class="text-sm text-white/85">誤操作防止のため 確認の上で確定してください</p>
                   <label class="inline-flex cursor-pointer items-center justify-center gap-2 text-sm text-white/85">
                     <input type="checkbox" v-model="declineConfirm" class="h-4 w-4 rounded border-champagne/60 text-gold focus:ring-gold" />
                     <span>ご欠席にて確定します</span>
@@ -448,8 +454,8 @@
                 </div>
               </template>
 
-              <p v-if="rsvpStatus === 'ok'" class="alert alert-ok" role="status" aria-live="polite">送信しました。ありがとうございました。</p>
-              <p v-if="rsvpStatus === 'error'" class="alert alert-error" role="status" aria-live="polite">送信に失敗しました。時間を置いて再度お試しください。</p>
+              <p v-if="rsvpStatus === 'ok'" class="alert alert-ok" role="status" aria-live="polite">送信しました ありがとうございました</p>
+              <p v-if="rsvpStatus === 'error'" class="alert alert-error" role="status" aria-live="polite">送信に失敗しました 時間を置いて再度お試しください</p>
             </form>
           </div>
         </div>
@@ -592,7 +598,7 @@ const mapEmbedUrl = (() => {
 const declineConfirm = ref(false)
 const rawMessage = (invitation.message ?? '').trim()
 const messageText: string = /\{\{.*\}\}/.test(rawMessage) || rawMessage === ''
-  ? `皆様いかがお過ごしでしょうか\n\nこのたび 披露宴を執り行うこととなりました。\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく、\nささやかながら小宴を催したく存じます。\n\nご多用中 誠に恐縮ではございますが、ぜひご出席いただきたくご案内申し上げます。`
+  ? `皆様 いかがお過ごしでしょうか\n\nこのたび 披露宴を執り行うこととなりました\n日頃 お世話になっております皆様に 私どもの門出をお見守りいただきたく\nささやかながら 小宴を催したく存じます\n\nご多用中 誠に恐縮ではございますが ぜひご出席いただきたく ご案内申し上げます`
   : rawMessage
 
 // Display-only: if the first one or two lines are 見出し「ご挨拶」, drop them to avoid duplicate heading in the card
@@ -657,7 +663,21 @@ const bodyParas = computed(() => {
 // 段落を読みやすいブロック（基本1文ずつ）に分割
 const bodyBlocks = computed(() => {
   const blocks: string[] = []
-  for (const para of bodyParas.value) {
+  const paras = bodyParas.value
+
+  // 句読点がない場合は、元の bodyText の改行単位をそのまま使う
+  const hasPunctuation = paras.some(p => /[。！？]/.test(p))
+  if (!hasPunctuation) {
+    const lines = (parts.value.bodyText || '')
+      .split(/\r?\n/)
+      .map(l => l.replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+    blocks.push(...lines)
+    return blocks
+  }
+
+  // 通常は句点ごとに区切って 1 文 1 行に整形
+  for (const para of paras) {
     const sents: string[] = []
     let cur = ''
     for (const ch of para) {
@@ -695,8 +715,8 @@ const displayCouple = (invitation.couple && invitation.couple.trim())
 // Short intros and messages (customizable via app.config.ts)
 const groomIntro = (invitation.groomIntro || '').trim()
 const brideIntro = (invitation.brideIntro || '').trim()
-const groomMessage = (invitation.groomMessage || 'ささやかながら感謝をお伝えする一日にできればと思っています。お時間が許せばぜひご参列ください！').trim()
-const brideMessage = (invitation.brideMessage || '大好きな皆さまと、素敵な時間を過ごせることを楽しみにしております！日々大感謝！').trim()
+const groomMessage = (invitation.groomMessage || 'ささやかながら 感謝をお伝えする一日にできればと思っています お時間が許せば ぜひご参列ください！').trim()
+const brideMessage = (invitation.brideMessage || '大好きな皆さまと 素敵な時間を過ごせることを楽しみにしております！ 日々 大感謝！').trim()
 
 // Optional times (if set in app.config.ts)
 const ceremonyTime = (invitation as any).ceremonyTime || ''
@@ -987,7 +1007,8 @@ function updateMessageFit() {
   // Reset to base for current viewport
   const isDesktop = window.matchMedia('(min-width: 768px)').matches
   const baseFs = isDesktop ? 16 : 15
-  const baseGap = isDesktop ? 24 : 20
+  // Base vertical gap between MESSAGE lines（やや詰め気味に調整）
+  const baseGap = isDesktop ? 18 : 14
   messageScale.value = 1
   messageFontPx.value = baseFs
   messageGapPx.value = baseGap
@@ -1002,7 +1023,7 @@ function updateMessageFit() {
   const targetFs = Math.max(12, Math.floor(baseFs * Math.min(1, ratio)))
   const fsScale = targetFs / baseFs
   messageFontPx.value = targetFs
-  messageGapPx.value = Math.max(12, Math.round(baseGap * fsScale))
+  messageGapPx.value = Math.max(8, Math.round(baseGap * fsScale))
 
   // Re-measure after style changes; then fallback to scale ifまだはみ出す
   requestAnimationFrame(() => {

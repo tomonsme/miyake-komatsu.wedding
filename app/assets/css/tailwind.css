@@ -441,7 +441,12 @@
       50% { transform: translateY(-4px); }
     }
 
-  /* Message content fine-tuning: allow dynamic gap via CSS var */
+  /* Message content fine-tuning */
+  .message-content .message-paras p {
+    /* Avoid breaking in the middle of phrases; prefer breaks at spaces */
+    word-break: keep-all;
+  }
+  /* Allow dynamic gap between lines via CSS var */
   .message-content .message-paras > p + p { margin-top: var(--msg-gap, 1.25rem); }
 
     /* Sparkles */
