@@ -1,5 +1,5 @@
 <template>
-  <div class="font-serif">
+  <div class="font-serif overflow-x-hidden">
     <NuxtLoadingIndicator color="#BDA06A" /> <!-- gold accent for loading -->
     <NuxtRouteAnnouncer />
     <SiteHeader />

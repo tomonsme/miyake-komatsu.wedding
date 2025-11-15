@@ -443,8 +443,15 @@
 
   /* Message content fine-tuning */
   .message-content .message-paras p {
-    /* Avoid breaking in the middle of phrases; prefer breaks at spaces */
-    word-break: keep-all;
+    /* Avoid overflow on narrow screens */
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+  @media (min-width: 768px) {
+    /* On desktop, keep phrases together as much as possible */
+    .message-content .message-paras p {
+      word-break: keep-all;
+    }
   }
   /* Allow dynamic gap between lines via CSS var */
   .message-content .message-paras > p + p { margin-top: var(--msg-gap, 1.25rem); }

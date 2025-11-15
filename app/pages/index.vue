@@ -53,7 +53,7 @@
           <span class="pointer-events-none absolute inset-[18px]" aria-hidden="true"
                 style="border: 1.5px solid rgba(220,192,142,.88);"></span>
           <span class="pointer-events-none absolute inset-[18px] border border-[#DCC08E]/60" aria-hidden="true"
-                style="transform: translate(8px,-8px);"></span>
+          ></span>
           <header class="mb-4 md:mb-6 text-center">
             <h2 class="mt-0 text-2xl md:text-3xl font-display tracking-wide text-gold uppercase foil-text">MESSAGE</h2>
             <div class="my-2 flex items-center justify-center gap-8">
@@ -281,7 +281,10 @@
 
       <div class="panel-navy panel-navy--flat fade-in-soft mx-auto max-w-lg">
         <div class="panel__inner text-center pt-4 pb-2 md:pt-6 md:pb-3">
-          <p class="text-sm leading-relaxed text-white/90 wrap-nice" v-html="widowSafe('ご多用のところ 誠に恐れ入りますが 下記の期日までに ご出欠の旨をご登録くださいますようお願い申し上げます')"></p>
+          <p
+            class="text-sm leading-relaxed text-white/90 wrap-nice whitespace-pre-line"
+            v-html="widowSafe('ご多用のところ 誠に恐れ入りますが\n下記の期日までに ご出欠の旨をご登録くださいますようお願い申し上げます')"
+          ></p>
           <p v-if="hasValidDate" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
             <span class="text-white/65 tracking-wide">ご回答期限：</span>
             <span class="ml-1 nums-unified text-lg text-gold">{{ rsvpDateHuman }}</span>
@@ -426,12 +429,12 @@
                       </button>
                     </div>
                   </div>
-                  <span class="field__hint">ご提供いただいた写真は 当日のスライド等に使用させていただく場合がございます</span>
+                  <span class="field__hint whitespace-pre-line">ご提供いただいた写真は\n当日のスライド等に使用させていただく場合がございます</span>
                 </div>
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
                   <div class="order-2 md:order-2">
-                    <p class="text-xs text-white/70">ご返信期日: 披露宴の1ヶ月前までを目安にお願いいたします</p>
+                    <p class="text-xs text-white/70 whitespace-pre-line">ご返信期日:\n披露宴の1ヶ月前までを目安にお願いいたします</p>
                     <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
                   </div>
                   <div class="order-1 md:order-1 flex w-full justify-center flex-col gap-2 sm:flex-row md:w-auto">
@@ -976,10 +979,7 @@ const messageGapPx = ref(20)
 const messageContentStyle = computed(() => {
   return {
     fontSize: messageFontPx.value + 'px',
-    ['--msg-gap' as any]: messageGapPx.value + 'px',
-    transform: `scale(${messageScale.value})`,
-    transformOrigin: 'top center',
-    willChange: 'transform'
+    ['--msg-gap' as any]: messageGapPx.value + 'px'
   } as Record<string, string>
 })
 function updateLetterBoxMinHeight() {
