@@ -848,10 +848,18 @@ async function submitRsvp() {
     }
     if (data.value?.success) {
       rsvpStatus.value = 'ok'
-      // 成功時の後処理: 下書きクリア → モーダル閉じる → サンクスページへ
+      // 成功時の後処理: 下書きクリア → モーダル閉じる
       clearDraft()
       closeRsvp()
-      await navigateTo('/thanks')
+      // サンクスページへ遷移（SPAナビゲーションに失敗した場合はフルリロードでフォールバック）
+      try {
+        await navigateTo('/thanks')
+      } catch (navErr) {
+        console.error('[RSVP] navigateTo(/thanks) failed, falling back to full reload', navErr)
+        if (process.client) {
+          window.location.href = '/thanks'
+        }
+      }
     } else {
       throw new Error('Request failed')
     }
