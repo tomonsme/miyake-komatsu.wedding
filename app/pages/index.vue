@@ -969,8 +969,6 @@ const heroSlides = computed(() => {
 // 出欠が変更されたら、欠席確認チェックはリセット
 watch(() => form.attendance, (v) => {
   if (v !== 'declining') declineConfirm.value = false
-  // 出欠トグルによる直後の自動保存ではトーストを抑制
-  suppressAutosaveToast.value = true
 })
 
 // RSVP modal control
