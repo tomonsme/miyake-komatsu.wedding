@@ -58,6 +58,9 @@ export default defineNuxtConfig({
     sesFrom: process.env.SES_FROM || '',
     sesTo: process.env.SES_TO || '',
     sesReplyTo: process.env.SES_REPLY_TO || '',
+    // AWS credentials for SES (explicit to avoid Netlify reserved names)
+    sesAccessKeyId: process.env.SES_ACCESS_KEY_ID || '',
+    sesSecretAccessKey: process.env.SES_SECRET_ACCESS_KEY || '',
     public: {
       rsvpMode: process.env.RSVP_MODE || 'google',
       googleFormEmbedUrl: process.env.GOOGLE_FORM_EMBED_URL || '',

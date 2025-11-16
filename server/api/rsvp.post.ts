@@ -69,6 +69,8 @@ export default defineEventHandler(async (event) => {
     from: (useRuntimeConfig(event) as any).sesFrom,
     to: (useRuntimeConfig(event) as any).sesTo,
     replyTo: (useRuntimeConfig(event) as any).sesReplyTo,
+    accessKeyId: (useRuntimeConfig(event) as any).sesAccessKeyId,
+    secretAccessKey: (useRuntimeConfig(event) as any).sesSecretAccessKey,
     payload
   }).catch((e) => {
     console.error('[rsvp.email]', e)
@@ -83,6 +85,8 @@ async function sendSesNotifications(options: {
   from: string
   to: string
   replyTo?: string
+  accessKeyId?: string
+  secretAccessKey?: string
   payload: {
     name: string
     email: string
@@ -92,10 +96,14 @@ async function sendSesNotifications(options: {
     created_at: string
   }
 }) {
-  const { region, from, to, replyTo, payload } = options
+  const { region, from, to, replyTo, accessKeyId, secretAccessKey, payload } = options
   if (!region || !from || !to) return 'skipped'
 
-  const client = new SESv2Client({ region })
+  const client = new SESv2Client({
+    region,
+    // Netlify では AWS_ACCESS_KEY_ID などが予約されているため、独自の環境変数名から明示的に渡す
+    credentials: accessKeyId && secretAccessKey ? { accessKeyId, secretAccessKey } : undefined
+  })
   const toList = to.split(',').map((s) => s.trim()).filter(Boolean)
   const subjectTag = payload.attendance === 'attending' ? 'ご出席' : payload.attendance === 'declining' ? 'ご欠席' : 'RSVP'
   const timestamp = new Date(payload.created_at).toLocaleString('ja-JP', { hour12: false })

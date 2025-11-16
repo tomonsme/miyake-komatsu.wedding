@@ -391,14 +391,6 @@
                 </label>
 
                 <label class="field">
-                  <span class="field__label">お飲み物</span>
-                  <select v-model="form.alcohol" class="field__control">
-                    <option value="ok">アルコール可</option>
-                    <option value="no">アルコール不可</option>
-                  </select>
-                </label>
-
-                <label class="field">
                   <span class="field__label">アレルギー・苦手な食材（任意）</span>
                   <textarea v-model="form.dietaryRestrictions" rows="2" class="field__control" placeholder="例）甲殻類アレルギー／生魚が苦手 など"></textarea>
                 </label>
@@ -1181,12 +1173,10 @@ watch(photoFiles, (files) => {
 })
 onBeforeUnmount(() => revokePreviews())
 
-// Draft autosave/load
+// Draft autosave/load（静かに自動保存し、明示操作時だけトーストを出す）
 const DRAFT_KEY = 'rsvp_draft_v1'
 type DraftState = Partial<typeof form> & { attendance?: string }
 const draftStatus = ref<'idle' | 'restored' | 'saved' | 'cleared'>('idle')
-// 初回の自動保存（復元直後など）はトーストを出さないためのフラグ
-const suppressAutosaveToast = ref(true)
 
 function loadDraft() {
   try {
@@ -1197,11 +1187,9 @@ function loadDraft() {
     Object.assign(form, data)
     draftStatus.value = 'restored'
     setTimeout(() => { if (draftStatus.value === 'restored') draftStatus.value = 'idle' }, 2000)
-    // 復元直後の自動保存は無言で行う
-    suppressAutosaveToast.value = true
   } catch {}
 }
-function saveDraft(showToast = true) {
+function saveDraft(showToast = false) {
   try {
     if (typeof window === 'undefined') return
     const copy: DraftState = { ...form }
@@ -1227,9 +1215,8 @@ watch(form, () => {
   if (typeof window === 'undefined') return
   clearTimeout(draftTimer)
   draftTimer = setTimeout(() => {
-    // suppressAutosaveToast が true の時は一度だけトースト非表示で保存
-    saveDraft(!suppressAutosaveToast.value)
-    suppressAutosaveToast.value = false
+    // 自動保存は常にサイレント（トーストなし）
+    saveDraft(false)
   }, 500)
 }, { deep: true })
 
