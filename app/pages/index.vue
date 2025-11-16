@@ -601,7 +601,7 @@ const mapEmbedUrl = (() => {
 const declineConfirm = ref(false)
 const rawMessage = (invitation.message ?? '').trim()
 const messageText: string = /\{\{.*\}\}/.test(rawMessage) || rawMessage === ''
-  ? `皆様いかがお過ごしでしょうか\n\nこのたび披露宴を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが\nぜひご出席いただきたくご案内申し上げます`
+  ? `皆様いかがお過ごしでしょうか\n\nこのたび披露宴を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが ぜひご出席いただきたくご案内申し上げます`
   : rawMessage
 
 // Display-only: if the first one or two lines are 見出し「ご挨拶」, drop them to avoid duplicate heading in the card
