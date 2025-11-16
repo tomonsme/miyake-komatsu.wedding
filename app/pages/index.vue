@@ -836,7 +836,16 @@ async function submitRsvp() {
       method: 'POST',
       body: payload
     })
-    if (error.value) throw error.value
+    if (error.value) {
+      // ログに詳細を出す（Netlify 本番でも dev でも確認しやすく）
+      console.error('[RSVP] /api/rsvp error', {
+        status: (error.value as any).statusCode ?? (error.value as any).status,
+        statusMessage: (error.value as any).statusMessage ?? (error.value as any).statusText,
+        data: (error.value as any).data,
+        payload
+      })
+      throw error.value
+    }
     if (data.value?.success) {
       rsvpStatus.value = 'ok'
       // 成功時の後処理: 下書きクリア → モーダル閉じる → サンクスページへ
@@ -847,6 +856,7 @@ async function submitRsvp() {
       throw new Error('Request failed')
     }
   } catch (e) {
+    console.error('[RSVP] submitRsvp catch', e)
     rsvpStatus.value = 'error'
   } finally {
     isSubmitting.value = false
