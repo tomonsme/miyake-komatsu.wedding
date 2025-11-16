@@ -6,7 +6,7 @@ export default defineAppConfig({
     eventDateIso: '2026-02-07',
     // RSVP deadline (ISO, shown as "YYYY年M月D日までに回答")
     rsvpDeadlineIso: '2026-01-07',
-    venueName: 'Tiara THE GARDEN HOUSE（ティアラ ザ ガーデンハウス）',
+    venueName: 'ザ・リッツ・カールトン大阪',
     venueAddress: '〒530-0001 大阪府大阪市北区梅田2丁目5-25',
     // Show map label as リッツ・カールトン大阪 while keeping address text
     googleMapUrl: 'https://www.google.com/maps?q=%E3%82%B6%E3%83%BB%E3%83%AA%E3%83%83%E3%83%84%E3%83%BB%E3%82%AB%E3%83%BC%E3%83%AB%E3%83%88%E3%83%B3%E5%A4%A7%E9%98%AA&hl=ja&z=16&output=embed',
