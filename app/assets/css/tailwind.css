@@ -276,6 +276,12 @@
     text-wrap: pretty;
   }
 
+  /* Ensure Thanks page content is visible even if motion styles fail */
+  .thanks-page > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   /* Navy panel: modern, deep navy with subtle sheen and gold hairline */
   .panel-navy { position: relative; border-radius: 1.25rem; overflow: hidden; }
   .panel-navy::before { content: ''; position: absolute; inset: 0; background:
