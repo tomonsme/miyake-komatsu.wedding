@@ -92,7 +92,7 @@ Choose one of the modes:
   - `SUPABASE_URL`, `SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE` (server only; recommended)
   - `ADMIN_TOKEN=<any secret>` to access `/admin`
-  - Optional AWS SES: `SES_REGION`, `SES_FROM`, `SES_TO`, `SES_REPLY_TO`
+  - Optional SendGrid email: `SENDGRID_API_KEY`, `SENDGRID_FROM`, `SENDGRID_TO`, `SENDGRID_REPLY_TO`
 
 ### Supabase setup
 - Create a public bucket `guest-photos` (Storage)

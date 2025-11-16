@@ -53,14 +53,11 @@ export default defineNuxtConfig({
     supabaseServiceRole: process.env.SUPABASE_SERVICE_ROLE || '',
     googleFormEmbedUrl: process.env.GOOGLE_FORM_EMBED_URL || '',
     ownAssets: process.env.OWN_ASSETS === 'true',
-    // Private email config (server only)
-    sesRegion: process.env.SES_REGION || '',
-    sesFrom: process.env.SES_FROM || '',
-    sesTo: process.env.SES_TO || '',
-    sesReplyTo: process.env.SES_REPLY_TO || '',
-    // AWS credentials for SES (explicit to avoid Netlify reserved names)
-    sesAccessKeyId: process.env.SES_ACCESS_KEY_ID || '',
-    sesSecretAccessKey: process.env.SES_SECRET_ACCESS_KEY || '',
+    // Private email config for SendGrid (server only)
+    sendgridApiKey: process.env.SENDGRID_API_KEY || '',
+    sendgridFrom: process.env.SENDGRID_FROM || '',
+    sendgridTo: process.env.SENDGRID_TO || '',
+    sendgridReplyTo: process.env.SENDGRID_REPLY_TO || '',
     public: {
       rsvpMode: process.env.RSVP_MODE || 'google',
       googleFormEmbedUrl: process.env.GOOGLE_FORM_EMBED_URL || '',
