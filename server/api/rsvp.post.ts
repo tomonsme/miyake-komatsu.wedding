@@ -64,6 +64,11 @@ export default defineEventHandler(async (event) => {
 
   // Non-blocking: try sending email notifications; do not fail the RSVP on email error
   const cfg = useRuntimeConfig(event) as any
+  console.log('[rsvp.email.config]', {
+    hasApiKey: !!cfg.sendgridApiKey,
+    hasFrom: !!cfg.sendgridFrom,
+    hasTo: !!cfg.sendgridTo
+  })
   const emailResult = await sendEmailNotifications({
     apiKey: cfg.sendgridApiKey,
     from: cfg.sendgridFrom,
@@ -93,7 +98,10 @@ async function sendEmailNotifications(options: {
   }
 }) {
   const { apiKey, from, to, replyTo, payload } = options
-  if (!apiKey || !from) return 'skipped'
+  if (!apiKey || !from) {
+    console.warn('[rsvp.email] skipped: missing apiKey or from')
+    return 'skipped'
+  }
 
   const toList = (to || '').split(',').map((s) => s.trim()).filter(Boolean)
   const subjectTag = payload.attendance === 'attending' ? 'ご出席' : payload.attendance === 'declining' ? 'ご欠席' : 'RSVP'
