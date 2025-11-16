@@ -6,6 +6,9 @@
         ご回答ありがとうございました
         お会いできる日を心より楽しみにしております
       </p>
+      <p class="mt-4 text-xs leading-relaxed text-ink/60">
+        自動返信メールが届かない場合は、迷惑メールフォルダもご確認ください。
+      </p>
       <NuxtLink to="/" class="btn mt-8">トップへ戻る</NuxtLink>
     </section>
   </main>

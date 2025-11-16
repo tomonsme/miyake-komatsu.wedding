@@ -107,6 +107,44 @@ async function sendEmailNotifications(options: {
   const subjectTag = payload.attendance === 'attending' ? 'ご出席' : payload.attendance === 'declining' ? 'ご欠席' : 'RSVP'
   const timestamp = new Date(payload.created_at).toLocaleString('ja-JP', { hour12: false })
 
+  // Invitation meta from app config (for party overview / signature)
+  let eventDateLabel = ''
+  let receptionOpenTime = ''
+  let receptionTime = ''
+  let ceremonyTime = ''
+  let venueName = ''
+  let venueAddress = ''
+  let photoShareUrl = ''
+  let photoShareDeadlineLabel = ''
+  let groomName = ''
+  let brideName = ''
+
+  try {
+    const appCfg = (typeof useAppConfig !== 'undefined' ? (useAppConfig() as any) : null) || {}
+    const inv = appCfg.invitation || {}
+    const formatIsoToJp = (iso?: string) => {
+      if (!iso) return ''
+      const d = new Date(iso)
+      if (Number.isNaN(d.getTime())) return ''
+      const y = d.getFullYear()
+      const m = d.getMonth() + 1
+      const day = d.getDate()
+      return `${y}年${m}月${day}日`
+    }
+    eventDateLabel = formatIsoToJp(inv.eventDateIso)
+    ceremonyTime = inv.ceremonyTime || ''
+    receptionOpenTime = inv.receptionOpenTime || ''
+    receptionTime = inv.receptionTime || ''
+    venueName = inv.venueName || ''
+    venueAddress = inv.venueAddress || ''
+    photoShareUrl = inv.photoShareUrl || ''
+    photoShareDeadlineLabel = formatIsoToJp(inv.photoShareDeadlineIso || inv.rsvpDeadlineIso)
+    groomName = inv.groomName || ''
+    brideName = inv.brideName || ''
+  } catch (e) {
+    console.warn('[rsvp.email] failed to read app config', e)
+  }
+
   const adminText = [
     '新しいRSVPが届きました。',
     '',
@@ -123,16 +161,39 @@ async function sendEmailNotifications(options: {
   const guestText = [
     `${payload.name} 様`,
     '',
-    'ご回答ありがとうございます。以下の内容で承りました。',
+    '出欠のご回答をいただきありがとうございました。',
     '',
-    `出欠: ${payload.attendance}`,
-    `同伴者数: ${payload.guests ?? 0}`,
+    '以下の内容で承りました。',
     '',
-    'メッセージ:',
+    '■当日のご案内',
+    eventDateLabel ? `開催日：${eventDateLabel}` : '',
+    ceremonyTime ? `挙式開始時刻：${ceremonyTime}` : '',
+    receptionOpenTime ? `受付開始時刻：${receptionOpenTime}` : '',
+    receptionTime ? `披露宴開始時刻：${receptionTime}` : '',
+    venueName ? `会場名：${venueName}` : '',
+    venueAddress ? `会場住所：${venueAddress}` : '',
+    '',
+    photoShareUrl
+      ? '■写真共有について\n当日は、おふたりのご意向により、写真をご共有いただけます。'
+      : '',
+    photoShareUrl ? (photoShareDeadlineLabel ? `受付締切：${photoShareDeadlineLabel}` : '') : '',
+    photoShareUrl ? `共有用URL：${photoShareUrl}` : '',
+    photoShareUrl ? '' : '',
+    '■ご登録内容',
+    `出欠情報：${subjectTag}`,
+    `氏名：${payload.name}`,
+    `メールアドレス：${payload.email}`,
+    `同伴者数：${payload.guests ?? 0}`,
+    '',
+    'メッセージ：',
     payload.message || '(なし)',
     '',
-    'このメールにお心当たりがない場合は破棄してください。'
-  ].join('\n')
+    'このメールにお心当たりがない場合は破棄してください。',
+    '',
+    '----------------------------------------',
+    groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
+    'Wedding Reception'
+  ].filter((line) => line !== '').join('\n')
 
   const headers = {
     Authorization: `Bearer ${apiKey}`,

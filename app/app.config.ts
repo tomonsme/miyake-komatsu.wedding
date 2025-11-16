@@ -38,11 +38,12 @@ export default defineAppConfig({
       '/hero2/IMG_7290.png',
       '/hero2/IMG_7282.png'
     ],
-    countdownBgUrl: '/countdown1.jpg'
-    ,
+    countdownBgUrl: '/countdown1.jpg',
     // Optional overlay image for hero (now optimized WebP)
-    welcomeOverlayUrl: '/welcome-overlay.webp'
-    ,
+    welcomeOverlayUrl: '/welcome-overlay.webp',
+    // Optional: guest photo share link and deadline (for email, etc.)
+    photoShareUrl: 'https://online.zexy.net/guest/invitations/ee1cae5a-b9f8-4955-977b-f94806d3aad0/pre_share_image',
+    photoShareDeadlineIso: '2025-10-31',
     // Footer label (e.g., brand or couple name)
     copyrightLabel: 'weddinginvitation-miyake-komatsu'
   }
