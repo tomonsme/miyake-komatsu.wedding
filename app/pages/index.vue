@@ -253,7 +253,7 @@
           <div class="mt-4 border-t border-champagne/50 pt-3">
             <p class="text-sm font-semibold text-white/90">駐車場のご案内</p>
             <p class="mt-2 text-sm text-white/80">ホテル地下駐車場をご利用ください</p>
-            <p class="mt-1 text-sm text-white/80">優待券をご用意しておりますので お引き上げの際はクロークスタッフへお申し出ください</p>
+            <p class="mt-1 text-sm text-white/80 whitespace-pre-line">優待券をご用意しておりますので\nお引き上げの際はクロークスタッフへお申し出ください</p>
             <ul class="mt-1 pl-5 text-xs text-white/70 list-disc space-y-1">
               <li>収容台数に限りがございます</li>
               <li>混雑時は周辺駐車場をご案内する場合がございます</li>
@@ -409,7 +409,7 @@
                 <label class="field">
                   <span class="field__label">メッセージ（任意）</span>
                   <textarea v-model="form.message" rows="3" class="field__control" placeholder="ご要望などございましたらご自由にお書きください"></textarea>
-                  <span class="field__hint">送信後の変更も承ります ご遠慮なくお知らせください</span>
+                  <span class="field__hint whitespace-pre-line">送信後の変更も承ります\nご遠慮なくお知らせください</span>
                 </label>
 
                 <div class="grid gap-2">
@@ -446,7 +446,7 @@
               <!-- 欠席の場合は誤操作防止の確定を要求 -->
               <template v-else-if="form.attendance === 'declining'">
                 <div class="mx-auto max-w-sm space-y-4 text-center">
-                  <p class="text-sm text-white/85">誤操作防止のため 確認の上で確定してください</p>
+                  <p class="text-sm text-white/85 whitespace-pre-line">誤操作防止のため\n確認の上で確定してください</p>
                   <label class="inline-flex cursor-pointer items-center justify-center gap-2 text-sm text-white/85">
                     <input type="checkbox" v-model="declineConfirm" class="h-4 w-4 rounded border-champagne/60 text-gold focus:ring-gold" />
                     <span>ご欠席にて確定します</span>
@@ -457,8 +457,8 @@
                 </div>
               </template>
 
-              <p v-if="rsvpStatus === 'ok'" class="alert alert-ok" role="status" aria-live="polite">送信しました ありがとうございました</p>
-              <p v-if="rsvpStatus === 'error'" class="alert alert-error" role="status" aria-live="polite">送信に失敗しました 時間を置いて再度お試しください</p>
+              <p v-if="rsvpStatus === 'ok'" class="alert alert-ok whitespace-pre-line" role="status" aria-live="polite">送信しました\nありがとうございました</p>
+              <p v-if="rsvpStatus === 'error'" class="alert alert-error whitespace-pre-line" role="status" aria-live="polite">送信に失敗しました\n時間を置いて再度お試しください</p>
             </form>
           </div>
         </div>
@@ -601,7 +601,7 @@ const mapEmbedUrl = (() => {
 const declineConfirm = ref(false)
 const rawMessage = (invitation.message ?? '').trim()
 const messageText: string = /\{\{.*\}\}/.test(rawMessage) || rawMessage === ''
-  ? `皆様 いかがお過ごしでしょうか\n\nこのたび 披露宴を執り行うこととなりました\n日頃 お世話になっております皆様に 私どもの門出をお見守りいただきたく\nささやかながら 小宴を催したく存じます\n\nご多用中 誠に恐縮ではございますが ぜひご出席いただきたく ご案内申し上げます`
+  ? `皆様いかがお過ごしでしょうか\n\nこのたび披露宴を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが\nぜひご出席いただきたくご案内申し上げます`
   : rawMessage
 
 // Display-only: if the first one or two lines are 見出し「ご挨拶」, drop them to avoid duplicate heading in the card
@@ -718,8 +718,8 @@ const displayCouple = (invitation.couple && invitation.couple.trim())
 // Short intros and messages (customizable via app.config.ts)
 const groomIntro = (invitation.groomIntro || '').trim()
 const brideIntro = (invitation.brideIntro || '').trim()
-const groomMessage = (invitation.groomMessage || 'ささやかながら 感謝をお伝えする一日にできればと思っています お時間が許せば ぜひご参列ください！').trim()
-const brideMessage = (invitation.brideMessage || '大好きな皆さまと 素敵な時間を過ごせることを楽しみにしております！ 日々 大感謝！').trim()
+const groomMessage = (invitation.groomMessage || 'ささやかながら感謝をお伝えする一日にできればと思っています\nお時間が許せばぜひご参列ください！').trim()
+const brideMessage = (invitation.brideMessage || '大好きな皆さまと素敵な時間を過ごせることを楽しみにしております！\n日々大感謝！').trim()
 
 // Optional times (if set in app.config.ts)
 const ceremonyTime = (invitation as any).ceremonyTime || ''
