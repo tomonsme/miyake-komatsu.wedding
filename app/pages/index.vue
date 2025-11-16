@@ -795,19 +795,17 @@ const isSubmitting = ref(false)
 
 function composeRsvpMessage() {
   const parts: string[] = []
-  if (form.message?.trim()) parts.push(form.message.trim())
-  if (form.dietaryRestrictions?.trim()) parts.push(`アレルギー等: ${form.dietaryRestrictions.trim()}`)
-  if (form.alcohol === 'no') parts.push('お飲み物: アルコール不可')
   if (form.postalCode?.trim() || form.address1?.trim() || form.address2?.trim()) {
     const pc = form.postalCode?.trim() ? `〒${form.postalCode.trim()}` : ''
     const addr = [form.address1?.trim(), form.address2?.trim()].filter(Boolean).join(' ')
-    parts.push(`ご住所: ${[pc, addr].filter(Boolean).join(' ')}`)
+    parts.push(`ご住所：${[pc, addr].filter(Boolean).join(' ')}`)
   }
-  if (uploadedPhotoUrls.value.length) {
-    parts.push('写真URL:')
-    for (const u of uploadedPhotoUrls.value) parts.push(`- ${u}`)
+  if (form.phone?.trim()) parts.push(`電話番号：${form.phone.trim()}`)
+  if (form.dietaryRestrictions?.trim()) parts.push(`アレルギー等: ${form.dietaryRestrictions.trim()}`)
+  if (form.alcohol === 'no') {
+    parts.push('お飲み物：アルコール不可')
   }
-  if (form.phone?.trim()) parts.push(`電話番号: ${form.phone.trim()}`)
+  if (form.message?.trim()) parts.push(`メッセージ：${form.message.trim()}`)
   return parts.join('\n')
 }
 

@@ -114,8 +114,6 @@ async function sendEmailNotifications(options: {
   let ceremonyTime = ''
   let venueName = ''
   let venueAddress = ''
-  let photoShareUrl = ''
-  let photoShareDeadlineLabel = ''
   let groomName = ''
   let brideName = ''
 
@@ -137,8 +135,6 @@ async function sendEmailNotifications(options: {
     receptionTime = inv.receptionTime || ''
     venueName = inv.venueName || ''
     venueAddress = inv.venueAddress || ''
-    photoShareUrl = inv.photoShareUrl || ''
-    photoShareDeadlineLabel = formatIsoToJp(inv.photoShareDeadlineIso || inv.rsvpDeadlineIso)
     groomName = inv.groomName || ''
     brideName = inv.brideName || ''
   } catch (e) {
@@ -161,9 +157,8 @@ async function sendEmailNotifications(options: {
   const guestText = [
     `${payload.name} 様`,
     '',
-    '出欠のご回答をいただきありがとうございました。',
-    '',
-    '以下の内容で承りました。',
+    'このたびは、招待サイトから出欠のご連絡をお送りくださり、ありがとうございます。',
+    '当日は、下記のスケジュールでお迎えできるよう準備を進めております。',
     '',
     '■当日のご案内',
     eventDateLabel ? `開催日：${eventDateLabel}` : '',
@@ -173,22 +168,17 @@ async function sendEmailNotifications(options: {
     venueName ? `会場名：${venueName}` : '',
     venueAddress ? `会場住所：${venueAddress}` : '',
     '',
-    photoShareUrl
-      ? '■写真共有について\n当日は、おふたりのご意向により、写真をご共有いただけます。'
-      : '',
-    photoShareUrl ? (photoShareDeadlineLabel ? `受付締切：${photoShareDeadlineLabel}` : '') : '',
-    photoShareUrl ? `共有用URL：${photoShareUrl}` : '',
-    photoShareUrl ? '' : '',
-    '■ご登録内容',
+    '■今回お預かりした内容',
     `出欠情報：${subjectTag}`,
     `氏名：${payload.name}`,
     `メールアドレス：${payload.email}`,
     `同伴者数：${payload.guests ?? 0}`,
     '',
-    'メッセージ：',
     payload.message || '(なし)',
     '',
     'このメールにお心当たりがない場合は破棄してください。',
+    '',
+    '今後ともどうぞよろしくお願いいたします。',
     '',
     '----------------------------------------',
     groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
