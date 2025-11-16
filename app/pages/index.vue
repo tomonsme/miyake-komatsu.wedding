@@ -69,7 +69,7 @@
             :style="messageContentStyle"
           >
             <!-- 謹啓（左寄せ） -->
-            <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5" v-html="widowSafe(parts.startLine)"></p>
+            <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5" v-html="parts.startLine"></p>
 
             <!-- 本文（改行維持・中央寄せ） -->
             <div class="text-center message-paras">
@@ -78,16 +78,16 @@
                 :key="i"
                 class="font-display leading-[1.9] md:leading-[2.3] tracking-normal text-royal/90"
                 style="text-wrap: balance; text-wrap: pretty;"
-                v-html="widowSafe(para)"
+                v-html="para"
               ></p>
             </div>
 
             <!-- 謹白（右寄せ） -->
-            <p v-if="parts.endLine" class="font-display leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7" v-html="widowSafe(parts.endLine)"></p>
+            <p v-if="parts.endLine" class="font-display leading-relaxed tracking-normal text-right text-royal/90 mt-6 md:mt-7" v-html="parts.endLine"></p>
 
             <!-- お名前（中央寄せ） -->
             <div v-if="parts.nameLines.length" class="mt-3 md:mt-4 text-center text-royal/90">
-              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display leading-relaxed tracking-normal" v-html="widowSafe(nm)"></p>
+              <p v-for="(nm, i) in parts.nameLines" :key="i" class="font-display leading-relaxed tracking-normal" v-html="nm"></p>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@
               </div>
             </div>
             <p v-if="groomIntro" class="mt-3 text-sm leading-relaxed text-white/90 wrap-nice">{{ groomIntro }}</p>
-            <p v-if="groomMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice">{{ groomMessage }}</p>
+            <p v-if="groomMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice" v-html="groomMessage"></p>
           </div>
         </div>
 
@@ -138,7 +138,7 @@
               </div>
             </div>
             <p v-if="brideIntro" class="mt-3 text-sm leading-relaxed text-white/90 wrap-nice">{{ brideIntro }}</p>
-            <p v-if="brideMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice">{{ brideMessage }}</p>
+            <p v-if="brideMessage" class="mt-3 text-sm leading-relaxed whitespace-pre-line text-white/90 wrap-nice" v-html="brideMessage"></p>
           </div>
         </div>
       </div>
@@ -601,7 +601,7 @@ const mapEmbedUrl = (() => {
 const declineConfirm = ref(false)
 const rawMessage = (invitation.message ?? '').trim()
 const messageText: string = /\{\{.*\}\}/.test(rawMessage) || rawMessage === ''
-  ? `皆様いかがお過ごしでしょうか\n\nこのたび披露宴を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが ぜひご出席いただきたくご案内申し上げます`
+  ? `皆様いかがお過ごしでしょうか\n\nこのたび<span class="nowrap-chunk">披露宴</span>を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが ぜひご出席いただきたくご案内申し上げます`
   : rawMessage
 
 // Display-only: if the first one or two lines are 見出し「ご挨拶」, drop them to avoid duplicate heading in the card
@@ -718,7 +718,7 @@ const displayCouple = (invitation.couple && invitation.couple.trim())
 // Short intros and messages (customizable via app.config.ts)
 const groomIntro = (invitation.groomIntro || '').trim()
 const brideIntro = (invitation.brideIntro || '').trim()
-const groomMessage = (invitation.groomMessage || 'ささやかながら感謝をお伝えする一日にできればと思っています\nお時間が許せばぜひご参列ください！').trim()
+const groomMessage = (invitation.groomMessage || 'ささやかながら感謝をお伝えする<span class="nowrap-chunk">一日</span>にできればと思っています\nお時間が許せばぜひご参列ください！').trim()
 const brideMessage = (invitation.brideMessage || '大好きな皆さまと素敵な時間を過ごせることを楽しみにしております！\n日々大感謝！').trim()
 
 // Optional times (if set in app.config.ts)
