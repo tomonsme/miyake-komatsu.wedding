@@ -343,20 +343,24 @@
                 <span v-else>自動で下書き保存されます</span>
                 <button type="button" class="underline decoration-white/30 underline-offset-4 hover:text-white" @click="clearDraft">下書きを削除</button>
               </div>
-              <div class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
-                <div class="choice-toggle">
-                  <button type="button" @click="form.attendance = 'attending'"
-                    class="rsvp-choice rsvp-choice--attend h-11 md:h-12 px-7 text-base"
-                    :class="{ 'is-active': form.attendance === 'attending' }"
-                    :aria-pressed="form.attendance === 'attending'"
-                    aria-label="ご出席を選択"><span class="rsvp-choice__label">ご出席</span></button>
-                  <button type="button" @click="form.attendance = 'declining'"
-                    class="rsvp-choice rsvp-choice--decline h-11 md:h-12 px-7 text-base"
-                    :class="{ 'is-active': form.attendance === 'declining' }"
-                    :aria-pressed="form.attendance === 'declining'"
-                    aria-label="ご欠席を選択"><span class="rsvp-choice__label">ご欠席</span></button>
-                </div>
+            <div v-if="!committedAttendance" class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
+              <div class="choice-toggle">
+                <button type="button" @click="form.attendance = 'attending'"
+                  class="rsvp-choice rsvp-choice--attend h-11 md:h-12 px-7 text-base"
+                  :class="{ 'is-active': form.attendance === 'attending' }"
+                  :aria-pressed="form.attendance === 'attending'"
+                  aria-label="ご出席を選択"><span class="rsvp-choice__label">ご出席</span></button>
+                <button type="button" @click="form.attendance = 'declining'"
+                  class="rsvp-choice rsvp-choice--decline h-11 md:h-12 px-7 text-base"
+                  :class="{ 'is-active': form.attendance === 'declining' }"
+                  :aria-pressed="form.attendance === 'declining'"
+                  aria-label="ご欠席を選択"><span class="rsvp-choice__label">ご欠席</span></button>
               </div>
+            </div>
+            <div v-else class="mt-3 text-center text-sm text-white/85">
+              <p>現在のご回答は {{ committedAttendance === 'attending' ? 'ご出席' : 'ご欠席' }} です</p>
+              <p class="mt-1 text-xs text-white/65">内容を修正される場合は このまま項目を更新して再度送信してください</p>
+            </div>
 
               <!-- 出席の場合のみフォーム表示 -->
               <template v-if="form.attendance === 'attending'">
@@ -848,8 +852,18 @@ async function submitRsvp() {
     }
     if (data.value?.success) {
       rsvpStatus.value = 'ok'
-      // 成功時の後処理: 下書きクリア → モーダル閉じる
-      clearDraft()
+      // 成功時の後処理: 最新内容をドラフトとして保持しつつ「提出済み」フラグを保存
+      if (typeof window !== 'undefined') {
+        try {
+          // トーストは出さずに上書き保存
+          saveDraft(false)
+          const committed = { attendance: form.attendance }
+          localStorage.setItem(RSVP_COMMITTED_KEY, JSON.stringify(committed))
+          if (form.attendance === 'attending' || form.attendance === 'declining') {
+            committedAttendance.value = form.attendance
+          }
+        } catch {}
+      }
       closeRsvp()
       // サンクスページへ遷移（SPAナビゲーションに失敗した場合はフルリロードでフォールバック）
       try {
@@ -887,6 +901,10 @@ const toDateLabel = computed(() => {
 })
 
 const timeLeft = reactive({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+
+// 一度提出したゲスト向けの「出欠ロック」状態
+const RSVP_COMMITTED_KEY = 'rsvp_committed_v1'
+const committedAttendance = ref<'attending' | 'declining' | null>(null)
 
 function updateCountdown() {
   if (!hasValidDate.value) return
@@ -1217,5 +1235,20 @@ watch(form, () => {
 
 onMounted(() => {
   loadDraft()
+  // 既に提出済みかどうか（同じ端末／ブラウザ）
+  try {
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem(RSVP_COMMITTED_KEY)
+      if (raw) {
+        const data = JSON.parse(raw) as { attendance?: string }
+        if (data.attendance === 'attending' || data.attendance === 'declining') {
+          committedAttendance.value = data.attendance
+          if (!form.attendance) {
+            form.attendance = data.attendance
+          }
+        }
+      }
+    }
+  } catch {}
 })
 </script>
