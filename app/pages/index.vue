@@ -68,6 +68,14 @@
             class="mx-auto mt-4 md:mt-6 mb-4 md:mb-6 max-w-[60ch] sm:max-w-[54ch] md:max-w-[46ch] text-center message-content"
             :style="messageContentStyle"
           >
+            <!-- Guest name line -->
+            <p
+              v-if="guestLabel"
+              class="font-display text-sm md:text-base tracking-wide text-royal/75 mb-3 md:mb-4"
+            >
+              {{ guestLabel }}
+            </p>
+
             <!-- 謹啓（左寄せ） -->
             <p v-if="parts.startLine" class="font-display leading-relaxed tracking-normal text-left text-royal/90 mb-4 md:mb-5" v-html="parts.startLine"></p>
 
@@ -499,6 +507,15 @@ const DEFAULT_ADDR = '大阪府大阪市北区梅田2-5-25'
 const DEFAULT_PHONE = '06-6343-7000'
 const DEFAULT_URL = 'https://modules.marriott.com/wedding-fair/jp/osarz-the-ritz-carlton-osaka'
 const DEFAULT_MAP = 'https://www.google.com/maps?hl=ja&q=大阪府大阪市北区梅田2-5-25&z=16&output=embed'
+
+// Per-guest name from URL query (?to=お名前)
+const route = useRoute()
+const guestName = computed(() => {
+  const q = route.query.to as string | string[] | undefined
+  const raw = Array.isArray(q) ? q[0] : q
+  return (raw || '').toString().trim()
+})
+const guestLabel = computed(() => (guestName.value ? `${guestName.value} 様` : ''))
 
 // Ensure couple displays even if app.config hot-reload not applied yet
 const couple = (invitation.couple && invitation.couple.trim()) ? (invitation.couple as string) : 'Tomoya & Mihono'
