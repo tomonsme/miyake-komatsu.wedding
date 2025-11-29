@@ -203,7 +203,12 @@
             <dl class="mx-auto grid max-w-lg grid-cols-[5.5rem_1fr] md:grid-cols-[6.25rem_1fr] gap-y-1.5 gap-x-3 text-base md:text-lg">
               <dt class="text-white/70 tracking-wide leading-snug">日　時</dt><dd class="text-white/90 leading-snug nums-unified">{{ dateLabel }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
-              <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionOpenTime || '—' }}</dd>
+              <template v-if="displayReceptionCallTime">
+                <dt class="text-white/70 tracking-wide leading-snug">集合時間</dt>
+                <dd class="text-white/90 leading-snug nums-unified">{{ displayReceptionCallTime }}</dd>
+                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              </template>
+              <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug nums-unified">{{ displayReceptionOpenTime || '—' }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <template v-if="ceremonyTime">
                 <dt class="text-white/70 tracking-wide leading-snug">挙　式</dt>
@@ -495,6 +500,15 @@ type InvitationConfig = {
   brideIntro?: string
   groomMessage?: string
   brideMessage?: string
+  ceremonyTime?: string
+  receptionOpenTime?: string
+  receptionTime?: string
+  receptionStaffCallTime?: string
+  receptionStaffMessage?: string
+  toastSpeakerMessage?: string
+  countdownBgUrl?: string
+  welcomeOverlayUrl?: string
+  heroImages?: string[]
 }
 
 const cfg = useAppConfig() as { invitation?: InvitationConfig }
@@ -515,6 +529,14 @@ const guestName = computed(() => {
   return (raw || '').toString().trim()
 })
 const guestLabel = computed(() => (guestName.value ? `${guestName.value} 様` : ''))
+const guestRole = computed(() => {
+  const param = route.query.role as string | string[] | undefined
+  const raw = Array.isArray(param) ? param[0] : param
+  const normalized = (raw || '').toString().trim().toLowerCase()
+  if (normalized === 'reception') return 'reception'
+  if (normalized === 'toast' || normalized === 'kanpai') return 'toast'
+  return 'guest'
+})
 
 // Ensure couple displays even if app.config hot-reload not applied yet
 const couple = (invitation.couple && invitation.couple.trim()) ? (invitation.couple as string) : 'Tomoya & Mihono'
@@ -612,16 +634,67 @@ const mapEmbedUrl = (() => {
 // RSVP: 欠席の誤操作防止用チェック
 const declineConfirm = ref(false)
 const rawMessage = (invitation.message ?? '').trim()
-const messageText: string = /\{\{.*\}\}/.test(rawMessage) || rawMessage === ''
-  ? `平素は格別のご厚情を賜り 厚く御礼申し上げます\n\nこのたび<span class="nowrap-chunk">披露宴</span>を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが ぜひご出席いただきたくご案内申し上げます`
-  : rawMessage
+const fallbackGeneralMessage = `平素は格別のご厚情を賜り 厚く御礼申し上げます\n\nこのたび<span class="nowrap-chunk">披露宴</span>を執り行うこととなりました\n日頃お世話になっております皆様に私どもの門出をお見守りいただきたく\nささやかながら小宴を催したく存じます\n\nご多用中誠に恐縮ではございますが ぜひご出席いただきたくご案内申し上げます`
+const generalMessage = computed(() => {
+  if (/\{\{.*\}\}/.test(rawMessage) || rawMessage === '') return fallbackGeneralMessage
+  return rawMessage
+})
+const rawReceptionMessage = ((invitation as any).receptionStaffMessage ?? '').toString().trim()
+const fallbackReceptionMessage = `謹啓
+
+平素より格別のご厚情を賜り 誠にありがとうございます
+私たちはこのたび 日頃の感謝をお伝えしたく 披露宴を執り行う運びとなりました
+
+あわせて 受付をご快諾くださり 心より御礼申し上げます
+誠に恐れ入りますが 当日は13時までに会場ロビーの受付デスクへお越しくださいますようお願い申し上げます
+
+当日の準備やご案内につきましては スタッフが随時対応いたしますので
+何かございましたらどうぞ遠慮なくお申しつけください
+
+ご多用のところ恐縮ではございますが
+当日はご臨席を賜りますよう 謹んでお願い申し上げます
+
+謹白
+
+三宅 智也
+小松 美穂乃`
+const receptionMessage = computed(() => (rawReceptionMessage ? rawReceptionMessage : fallbackReceptionMessage))
+const rawToastExtra = ((invitation as any).toastSpeakerMessage ?? '').toString().trim()
+const fallbackToastExtra = `あわせて 乾杯のご発声を快くお引き受けくださり 心より御礼申し上げます\n披露宴の開宴に合わせてご挨拶を賜りたく存じますので 当日もどうぞよろしくお願いいたします`
+const toastExtraMessage = computed(() => (rawToastExtra ? rawToastExtra : fallbackToastExtra))
+
+function mergeMessageWithExtra(base: string, extra: string) {
+  if (!extra) return base
+  const closingPattern = /\r?\n\s*謹白/
+  const match = closingPattern.exec(base)
+  if (!match || typeof match.index !== 'number') {
+    return `${base}\n\n${extra}`
+  }
+  const idx = match.index
+  const beforeRaw = base.slice(0, idx).replace(/\r\n/g, '\n').replace(/\s+$/, '')
+  const after = base.slice(idx).replace(/^\s+/, '')
+  const lastNewline = beforeRaw.lastIndexOf('\n')
+  if (lastNewline === -1) {
+    return `${beforeRaw}\n\n${extra}\n\n${after}`.trim()
+  }
+  const head = beforeRaw.slice(0, lastNewline).replace(/\s+$/, '')
+  const tail = beforeRaw.slice(lastNewline + 1).trim()
+  const rebuilt = [head, extra, tail].filter(Boolean).join('\n\n')
+  return `${rebuilt}\n\n${after}`
+}
+const messageText = computed(() => {
+  if (guestRole.value === 'reception') return receptionMessage.value
+  const base = generalMessage.value
+  if (guestRole.value !== 'toast') return base
+  return mergeMessageWithExtra(base, toastExtraMessage.value)
+})
 
 // Display-only: if the first one or two lines are 見出し「ご挨拶」, drop them to avoid duplicate heading in the card
 function fwToAscii(s: string) {
   return s.replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
 }
 const messageDisplay = computed(() => {
-  const lines = messageText.split(/\r?\n/)
+  const lines = messageText.value.split(/\r?\n/)
   while (lines.length) {
     const raw = lines[0].trim()
     const headJ = raw.replace(/\s/g, '')
@@ -737,6 +810,9 @@ const brideMessage = (invitation.brideMessage || '大好きな皆さまと素敵
 const ceremonyTime = (invitation as any).ceremonyTime || ''
 const receptionTime = (invitation as any).receptionTime || ''
 const receptionOpenTime = (invitation as any).receptionOpenTime || ''
+const receptionStaffCallTime = (invitation as any).receptionStaffCallTime || ''
+const displayReceptionOpenTime = computed(() => receptionOpenTime || '')
+const displayReceptionCallTime = computed(() => (guestRole.value === 'reception' ? (receptionStaffCallTime || '') : ''))
 const DEFAULT_EVENT_DATE = '2026-02-07'
 
 function parseLocalDate(iso?: string) {
