@@ -8,7 +8,7 @@
         <!-- Mobile: keep Invitation title and tagline visible in compact style -->
         <h3 class="mt-2 font-display text-base tracking-wide text-gold">Invitation</h3>
         <LeafDivider />
-        <p class="mt-1 text-xs leading-relaxed text-white/80 text-center">大切なゲストのみなさまへ。心を込めて。</p>
+        <p class="mt-1 text-xs leading-relaxed text-white/80 text-center">大切なゲストのみなさまへ 心を込めて</p>
       </div>
       
       <!-- Desktopも中央縦積み（全ブロック中央寄せ） -->
@@ -16,7 +16,7 @@
         <div class="max-w-prose mx-auto hidden md:block">
           <h3 class="font-display text-lg tracking-wide text-gold">Invitation</h3>
           <LeafDivider />
-          <p class="mt-2 text-sm leading-relaxed text-white/80">大切なゲストのみなさまへ。心を込めて。</p>
+          <p class="mt-2 text-sm leading-relaxed text-white/80">大切なゲストのみなさまへ 心を込めて</p>
         </div>
         <div class="max-w-prose mx-auto">
           <h4 class="hidden md:block text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70">Links</h4>
@@ -28,7 +28,7 @@
         </div>
         <div class="max-w-prose mx-auto">
           <h4 class="hidden md:block text-[11px] font-semibold uppercase tracking-[0.3em] text-white/70">Contact</h4>
-          <p class="mt-0 md:mt-2 text-xs md:text-sm leading-relaxed text-white/80">ご不明点は招待状の送信者までご連絡ください。</p>
+          <p class="mt-0 md:mt-2 text-xs md:text-sm leading-relaxed text-white/80">ご不明点は招待状の送信者までご連絡ください</p>
         </div>
       </div>
       <div class="mt-4 md:mt-8 text-center text-xs md:text-sm text-white/70 leading-relaxed">

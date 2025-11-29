@@ -142,7 +142,7 @@ async function sendEmailNotifications(options: {
   }
 
   const adminText = [
-    '新しいRSVPが届きました。',
+    '新しいRSVPが届きました',
     '',
     `日時：${timestamp}`,
     `お名前：${payload.name}`,
@@ -156,8 +156,8 @@ async function sendEmailNotifications(options: {
   const guestText = [
     `${payload.name} 様`,
     '',
-    'このたびは、招待サイトから出欠のご連絡をお送りくださり、ありがとうございます。',
-    '当日は、下記のスケジュールでお迎えできるよう準備を進めております。',
+    'このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます',
+    '当日は 下記のスケジュールでお迎えできるよう準備を進めております',
     '',
     '■ 当日のご案内',
     eventDateLabel ? `・開催日：${eventDateLabel}` : '',
@@ -174,9 +174,9 @@ async function sendEmailNotifications(options: {
     '',
     payload.message || '(なし)',
     '',
-    'このメールにお心当たりがない場合は破棄してください。',
+    'このメールにお心当たりがない場合は破棄してください',
     '',
-    '今後ともどうぞよろしくお願いいたします。',
+    '今後ともどうぞよろしくお願いいたします',
     '',
     '----------------------------------------',
     groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
