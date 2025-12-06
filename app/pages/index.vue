@@ -395,12 +395,12 @@
 
                 <div class="grid gap-4 md:grid-cols-3">
                   <label class="field md:col-span-1">
-                    <span class="field__label">郵便番号（任意）</span>
-                    <input v-model="form.postalCode" type="text" inputmode="numeric" pattern="[0-9\-]*" class="field__control" placeholder="例）123-4567" />
+                    <span class="field__label">郵便番号</span>
+                    <input v-model="form.postalCode" type="text" inputmode="numeric" pattern="[0-9\-]*" class="field__control" placeholder="例）123-4567" required aria-required="true" />
                   </label>
                   <label class="field md:col-span-2">
-                    <span class="field__label">ご住所（任意）</span>
-                    <input v-model="form.address1" type="text" class="field__control" placeholder="例）大阪府大阪市北区梅田2-5-25" />
+                    <span class="field__label">ご住所</span>
+                    <input v-model="form.address1" type="text" class="field__control" placeholder="例）大阪府大阪市北区梅田2-5-25" required aria-required="true" />
                   </label>
                 </div>
                 <label class="field">
@@ -409,21 +409,20 @@
                 </label>
 
                 <label class="field">
+                  <span class="field__label">電話番号</span>
+                  <input v-model="form.phone" type="tel" inputmode="tel" class="field__control" placeholder="例）090-1234-5678" required aria-required="true" />
+                </label>
+
+                <label class="field">
                   <span class="field__label">アレルギー・苦手な食材（任意）</span>
                   <textarea v-model="form.dietaryRestrictions" rows="2" class="field__control" placeholder="例）甲殻類アレルギー／生魚が苦手 など"></textarea>
                 </label>
 
-                <div class="grid gap-4 md:grid-cols-2">
-                  <label class="field">
-                    <span class="field__label">電話番号（任意）</span>
-                    <input v-model="form.phone" type="tel" inputmode="tel" class="field__control" placeholder="例）090-1234-5678" />
-                  </label>
-                </div>
-
                 <label class="field">
                   <span class="field__label">メッセージ（任意）</span>
                   <textarea v-model="form.message" rows="3" class="field__control" placeholder="ご要望などございましたらご自由にお書きください"></textarea>
-                  <span class="field__hint whitespace-pre-line">送信後の変更も承ります\nご遠慮なくお知らせください</span>
+                  <span class="field__hint whitespace-pre-line">送信後の変更も承ります
+ご遠慮なくお知らせください</span>
                 </label>
 
                 <div class="grid gap-2">
