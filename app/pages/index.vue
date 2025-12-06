@@ -430,26 +430,6 @@
 ご遠慮なくお知らせください</span>
                 </label>
 
-                <div class="grid gap-2">
-                  <span class="field__label">写真の共有（任意 最大10枚・各10MBまで）</span>
-                  <div class="flex flex-wrap gap-2">
-                    <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-champagne/60 bg-white/5 px-4 py-3 text-sm text-white/85 hover:bg-white/10">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                      <span>写真を選択</span>
-                      <input type="file" accept="image/*" multiple class="hidden" @change="onPhotoSelect" />
-                    </label>
-                  </div>
-                  <div v-if="photoFiles.length" class="mt-2 flex flex-wrap gap-3">
-                    <div v-for="(f,i) in photoFiles" :key="i" class="relative overflow-hidden rounded-lg border border-champagne/40 bg-white/5">
-                      <img :src="photoPreviews[i]" :alt="f.name" class="h-20 w-20 object-cover" />
-                      <button type="button" class="absolute right-1 top-1 rounded-full bg-royal/70 p-1 text-white/80 hover:bg-royal/90" @click="removePhotoAt(i)" aria-label="削除">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                  <span class="field__hint whitespace-pre-line">ご提供いただいた写真は
-当日のスライド等に使用させていただく場合がございます</span>
-                </div>
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
                   <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
@@ -938,13 +918,6 @@ async function submitRsvp() {
   if (isSubmitting.value) return
   try {
     isSubmitting.value = true
-    // 先に写真アップロード（任意）
-    if (photoFiles.value.length) {
-      const urls = await uploadPhotos(photoFiles.value)
-      uploadedPhotoUrls.value = urls
-    } else {
-      uploadedPhotoUrls.value = []
-    }
     const payload = {
       name: form.name,
       email: form.email,
@@ -1248,56 +1221,6 @@ function softBreakAddress(s?: string) {
   return t
 }
 
-// Optional photo upload (任意)
-const photoFiles = ref<File[]>([])
-const uploadedPhotoUrls = ref<string[]>([])
-function onPhotoSelect(e: Event) {
-  const input = e.target as HTMLInputElement
-  const files = Array.from(input.files || [])
-  const next = [...photoFiles.value]
-  for (const f of files) {
-    if (!f.type.startsWith('image/')) continue
-    if (f.size > 10 * 1024 * 1024) continue // 10MB制限
-    if (next.length >= 10) break
-    next.push(f)
-  }
-  photoFiles.value = next
-  input.value = ''
-}
-function removePhotoAt(i: number) {
-  const next = [...photoFiles.value]
-  next.splice(i, 1)
-  photoFiles.value = next
-}
-async function uploadPhotos(files: File[]) {
-  const formData = new FormData()
-  files.forEach((f) => formData.append('files', f))
-  const { data, error } = await useFetch('/api/upload', { method: 'POST', body: formData })
-  if (error.value) {
-    const errData = (error.value as any)?.data as any
-    const detail = errData?.reason || (error.value as any).statusMessage || '写真のアップロードに失敗しました'
-    console.error('[uploadPhotos] failed', detail, error.value)
-    throw new Error(detail)
-  }
-  const urls = (data.value as any)?.urls as string[] | undefined
-  return urls || []
-}
-
-// Manage preview object URLs on client
-const photoPreviews = ref<string[]>([])
-function revokePreviews() {
-  if (typeof window === 'undefined') return
-  for (const u of photoPreviews.value) {
-    try { URL.revokeObjectURL(u) } catch {}
-  }
-  photoPreviews.value = []
-}
-watch(photoFiles, (files) => {
-  revokePreviews()
-  if (typeof window === 'undefined' || typeof URL === 'undefined') return
-  photoPreviews.value = files.map((f) => URL.createObjectURL(f))
-})
-onBeforeUnmount(() => revokePreviews())
 
 // Draft autosave/load（静かに自動保存し、明示操作時だけトーストを出す）
 const DRAFT_KEY = 'rsvp_draft_v1'
