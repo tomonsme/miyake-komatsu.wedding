@@ -442,7 +442,8 @@
                       </button>
                     </div>
                   </div>
-                  <span class="field__hint whitespace-pre-line">ご提供いただいた写真は\n当日のスライド等に使用させていただく場合がございます</span>
+                  <span class="field__hint whitespace-pre-line">ご提供いただいた写真は
+当日のスライド等に使用させていただく場合がございます</span>
                 </div>
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
