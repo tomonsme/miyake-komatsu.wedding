@@ -44,6 +44,28 @@ const props = withDefaults(defineProps<{ images: Slide[]; interval?: number; def
 const defaultPosition = computed(() => props.defaultPosition)
 const slides = computed(() => props.images.map((s) => typeof s === 'string' ? { src: s } : s))
 const current = ref(0)
+const preloaded = new Set<string>()
+
+function resolveSrc(src: string) {
+  try {
+    return $img(src, { format: 'jpg', quality: 80 }) || src
+  } catch {
+    return src
+  }
+}
+
+function preloadImages() {
+  if (typeof window === 'undefined') return
+  slides.value.forEach((slide) => {
+    const key = slide.src
+    if (!key || preloaded.has(key)) return
+    const url = resolveSrc(key)
+    const img = new Image()
+    img.decoding = 'async'
+    img.src = url
+    preloaded.add(key)
+  })
+}
 
 const fillStyle = computed(() => {
   if (props.fillMode === 'blur' && slides.value[current.value]) {
@@ -64,12 +86,17 @@ const fillStyle = computed(() => {
 
 let timer: any
 onMounted(() => {
+  preloadImages()
   if (props.images.length <= 1) return
   timer = setInterval(() => {
     current.value = (current.value + 1) % props.images.length
   }, props.interval)
 })
 onBeforeUnmount(() => clearInterval(timer))
+
+watch(slides, () => {
+  preloadImages()
+})
 </script>
 
 <style scoped>
