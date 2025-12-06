@@ -69,6 +69,7 @@ export default defineAppConfig({
 披露宴の開宴に合わせてご挨拶を賜りたく存じますので 当日もどうぞよろしくお願いいたします`,
     // Hero slider images (public/ 配下のパス)
     heroImages: [
+      '/two.JPG',
       // hero2 配下のPNGをヒーローに使用（順番は任意に変更可）
       '/hero2/IMG_7286.png',
       '/hero2/IMG_7290.png',

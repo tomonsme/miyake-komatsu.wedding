@@ -366,6 +366,7 @@
                 <span v-else>自動で下書き保存されます</span>
                 <button type="button" class="underline decoration-white/30 underline-offset-4 hover:text-white" @click="clearDraft">下書きを削除</button>
               </div>
+              <p class="text-center text-xs text-white/60">ご回答期限は披露宴の1ヶ月前頃を希望しております</p>
             <div v-if="!committedAttendance" class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
               <div class="choice-toggle">
                 <button type="button" @click="form.attendance = 'attending'"
@@ -452,11 +453,8 @@
                 </div>
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
-                  <div class="order-2 md:order-2">
-                    <p class="text-xs text-white/70 whitespace-pre-line">ご返信期日:\n披露宴の1ヶ月前までを目安にお願いいたします</p>
-                    <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
-                  </div>
-                  <div class="order-1 md:order-1 flex w-full justify-center flex-col gap-2 sm:flex-row md:w-auto">
+                  <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
+                  <div class="flex w-full justify-center flex-col gap-2 sm:flex-row md:w-auto">
                     <button type="submit" class="btn-gold btn-lg w-full sm:w-auto" :disabled="isSubmitting">{{ isSubmitting ? '送信中…' : (rsvpStatus === 'ok' ? '変更を再送信' : '送信') }}</button>
                   </div>
                 </div>
