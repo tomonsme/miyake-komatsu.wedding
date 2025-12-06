@@ -311,7 +311,7 @@
           <p v-if="hasValidDate" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
             <span class="text-white/65 tracking-wide">ご回答期限：</span>
             <span class="ml-1 nums-unified text-lg text-gold">{{ rsvpDateHuman }}</span>
-            <span class="ml-1">まで</span>
+            <span class="ml-1">頃までにいただけますと幸いです</span>
           </p>
           <button type="button" class="btn-callout btn-lg btn-icon mt-3" @click="openRsvp()" aria-label="ご出欠のご回答フォームを開く">
             招待状に回答する
@@ -366,7 +366,6 @@
                 <span v-else>自動で下書き保存されます</span>
                 <button type="button" class="underline decoration-white/30 underline-offset-4 hover:text-white" @click="clearDraft">下書きを削除</button>
               </div>
-              <p class="text-center text-xs text-white/60">ご回答期限は披露宴の1ヶ月前頃を希望しております</p>
             <div v-if="!committedAttendance" class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
               <div class="choice-toggle">
                 <button type="button" @click="form.attendance = 'attending'"
