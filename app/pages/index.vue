@@ -427,7 +427,7 @@
                   <span class="field__label">メッセージ（任意）</span>
                   <textarea v-model="form.message" rows="3" class="field__control" placeholder="ご要望などございましたらご自由にお書きください"></textarea>
                   <span class="field__hint whitespace-pre-line">送信後の変更も承ります
-ご遠慮なくお知らせください</span>
+ご変更がございましたら再送信にてお知らせください</span>
                 </label>
 
 
