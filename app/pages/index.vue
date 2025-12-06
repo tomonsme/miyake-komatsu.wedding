@@ -1273,7 +1273,12 @@ async function uploadPhotos(files: File[]) {
   const formData = new FormData()
   files.forEach((f) => formData.append('files', f))
   const { data, error } = await useFetch('/api/upload', { method: 'POST', body: formData })
-  if (error.value) throw error.value
+  if (error.value) {
+    const errData = (error.value as any)?.data as any
+    const detail = errData?.reason || (error.value as any).statusMessage || '写真のアップロードに失敗しました'
+    console.error('[uploadPhotos] failed', detail, error.value)
+    throw new Error(detail)
+  }
   const urls = (data.value as any)?.urls as string[] | undefined
   return urls || []
 }

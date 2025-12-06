@@ -6,22 +6,25 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
 
   if (config.rsvpMode !== 'supabase') {
+    const msg = 'Upload requires RSVP_MODE=supabase'
     console.warn('[upload] skipped: RSVP mode is not supabase')
-    throw createError({ statusCode: 400, statusMessage: 'Upload requires RSVP_MODE=supabase' })
+    throw createError({ statusCode: 400, statusMessage: msg, data: { reason: msg } })
   }
   if (!config.supabaseUrl || (!config.supabaseAnonKey && !(config as any).supabaseServiceRole)) {
+    const msg = 'Supabase configuration is incomplete.'
     console.error('[upload] missing Supabase configuration', {
       hasUrl: !!config.supabaseUrl,
       hasAnon: !!config.supabaseAnonKey,
       hasService: !!(config as any).supabaseServiceRole
     })
-    throw createError({ statusCode: 500, statusMessage: 'Supabase configuration is incomplete.' })
+    throw createError({ statusCode: 500, statusMessage: msg, data: { reason: msg } })
   }
 
   const form = await readMultipartFormData(event)
   if (!form || form.length === 0) {
+    const msg = 'No files received.'
     console.warn('[upload] no files received')
-    throw createError({ statusCode: 400, statusMessage: 'No files received.' })
+    throw createError({ statusCode: 400, statusMessage: msg, data: { reason: msg } })
   }
 
   const supabaseKey = ((config as any).supabaseServiceRole as string) || config.supabaseAnonKey
@@ -36,10 +39,7 @@ export default defineEventHandler(async (event) => {
   const urls: string[] = []
 
   for (const part of form) {
-    if (part.type !== 'file' || !part.filename) {
-      console.warn('[upload] skipped part without file metadata')
-      continue
-    }
+    if (part.type !== 'file' || !part.filename) continue
     const contentType = part.type === 'file' ? part.mimetype || 'application/octet-stream' : 'application/octet-stream'
     if (!contentType.startsWith('image/')) {
       console.warn('[upload] skipped non-image file', { filename: part.filename, contentType })
@@ -47,15 +47,20 @@ export default defineEventHandler(async (event) => {
     }
     // enforce 10MB limit server-side
     if (part.data && part.data.length > 10 * 1024 * 1024) {
+      const msg = 'File too large (max 10MB).'
       console.warn('[upload] file too large', { filename: part.filename, size: part.data?.length })
-      throw createError({ statusCode: 413, statusMessage: 'File too large (max 10MB).' })
+      throw createError({ statusCode: 413, statusMessage: msg, data: { reason: msg } })
     }
     const ext = part.filename.split('.').pop() || 'bin'
     const key = `${basePath}/${randomUUID()}.${ext}`
     const { error: upErr } = await supabase.storage.from(bucket).upload(key, part.data, { contentType, upsert: false })
     if (upErr) {
-      console.error('[upload]', upErr)
-      throw createError({ statusCode: 500, statusMessage: 'Failed to upload file.' })
+      console.error('[upload] supabase upload failed', upErr)
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Failed to upload file.',
+        data: { reason: upErr.message || upErr.error_description || 'Failed to upload file.' }
+      })
     }
     const { data: pub } = supabase.storage.from(bucket).getPublicUrl(key)
     if (pub?.publicUrl) {
