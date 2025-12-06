@@ -218,7 +218,12 @@
                 <dd class="text-white/90 leading-snug nums-unified">{{ displayCeremonyTime }}</dd>
                 <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               </template>
-              <template v-if="guestRole !== 'family'">
+              <template v-if="guestRole === 'family' && receptionTime">
+                <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt>
+                <dd class="text-white/90 leading-snug nums-unified">{{ receptionTime }}</dd>
+                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              </template>
+              <template v-else-if="guestRole !== 'family'">
                 <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt>
                 <dd class="text-white/90 leading-snug nums-unified">{{ receptionTime || '—' }}</dd>
                 <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
@@ -654,10 +659,7 @@ const fallbackReceptionMessage = `謹啓
 私たちはこのたび 日頃の感謝をお伝えしたく 披露宴を執り行う運びとなりました
 
 あわせて 受付をご快諾くださり 心より御礼申し上げます
-誠に恐れ入りますが 当日は13時までに会場ロビーの受付デスクへお越しくださいますようお願い申し上げます
-
-当日の準備やご案内につきましては スタッフが随時対応いたしますので
-何かございましたらどうぞ遠慮なくお申しつけください
+誠に恐れ入りますが 当日は13時までに会場へお越しくださいますようお願い申し上げます
 
 ご多用のところ恐縮ではございますが
 当日はご臨席を賜りますよう 謹んでお願い申し上げます
