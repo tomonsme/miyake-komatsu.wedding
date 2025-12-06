@@ -71,7 +71,7 @@
             <!-- Guest name line -->
             <p
               v-if="guestLabel"
-              class="font-display text-sm md:text-base tracking-wide text-royal/75 mb-3 md:mb-4"
+              class="font-display tracking-normal text-royal/75 mb-3 md:mb-4"
             >
               {{ guestLabel }}
             </p>
