@@ -204,19 +204,25 @@
               <dt class="text-white/70 tracking-wide leading-snug">日　時</dt><dd class="text-white/90 leading-snug nums-unified">{{ dateLabel }}</dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <template v-if="displayReceptionCallTime">
-                <dt class="text-white/70 tracking-wide leading-snug">集合時間</dt>
+                <dt class="text-white/70 tracking-wide leading-snug">{{ guestRole === 'family' ? '集　合' : '集合時間' }}</dt>
                 <dd class="text-white/90 leading-snug nums-unified">{{ displayReceptionCallTime }}</dd>
                 <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               </template>
-              <dt class="text-white/70 tracking-wide leading-snug">受　付</dt><dd class="text-white/90 leading-snug nums-unified">{{ displayReceptionOpenTime || '—' }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
-              <template v-if="ceremonyTime">
-                <dt class="text-white/70 tracking-wide leading-snug">挙　式</dt>
-                <dd class="text-white/90 leading-snug nums-unified">{{ ceremonyTime }}</dd>
+              <template v-if="guestRole !== 'family' && displayReceptionOpenTime">
+                <dt class="text-white/70 tracking-wide leading-snug">受　付</dt>
+                <dd class="text-white/90 leading-snug nums-unified">{{ displayReceptionOpenTime }}</dd>
                 <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               </template>
-              <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt><dd class="text-white/90 leading-snug nums-unified">{{ receptionTime || '—' }}</dd>
-              <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              <template v-if="displayCeremonyTime">
+                <dt class="text-white/70 tracking-wide leading-snug">挙　式</dt>
+                <dd class="text-white/90 leading-snug nums-unified">{{ displayCeremonyTime }}</dd>
+                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              </template>
+              <template v-if="guestRole !== 'family'">
+                <dt class="text-white/70 tracking-wide leading-snug">披露宴</dt>
+                <dd class="text-white/90 leading-snug nums-unified">{{ receptionTime || '—' }}</dd>
+                <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
+              </template>
               <dt class="text-white/70 tracking-wide leading-snug">場　所</dt><dd class="text-white/90 leading-snug wrap-nice" v-html="placeDisplayBr"></dd>
               <div class="col-span-2 h-px bg-[#DCC08E]/25 my-1"></div>
               <dt class="text-white/70 tracking-wide leading-snug">住　所</dt>
@@ -505,6 +511,7 @@ type InvitationConfig = {
   receptionTime?: string
   receptionStaffCallTime?: string
   receptionStaffMessage?: string
+  familyMessage?: string
   toastSpeakerMessage?: string
   countdownBgUrl?: string
   welcomeOverlayUrl?: string
@@ -528,11 +535,12 @@ const guestName = computed(() => {
   const raw = Array.isArray(q) ? q[0] : q
   return (raw || '').toString().trim()
 })
-const guestLabel = computed(() => (guestName.value ? `${guestName.value} 様` : ''))
+const guestLabel = computed(() => (guestName.value?.trim() || ''))
 const guestRole = computed(() => {
   const param = route.query.role as string | string[] | undefined
   const raw = Array.isArray(param) ? param[0] : param
   const normalized = (raw || '').toString().trim().toLowerCase()
+  if (normalized === 'family' || normalized === 'relative' || normalized === 'kin') return 'family'
   if (normalized === 'reception') return 'reception'
   if (normalized === 'toast' || normalized === 'kanpai') return 'toast'
   return 'guest'
@@ -659,6 +667,26 @@ const fallbackReceptionMessage = `謹啓
 三宅 智也
 小松 美穂乃`
 const receptionMessage = computed(() => (rawReceptionMessage ? rawReceptionMessage : fallbackReceptionMessage))
+const rawFamilyMessage = ((invitation as any).familyMessage ?? '').toString().trim()
+const fallbackFamilyMessage = `謹啓
+
+平素より格別のご厚情を賜り 厚く御礼申し上げます
+
+おかげさまで このたび私たちは
+親族の皆さまの日頃の温かいお支えを賜り
+挙式ならびに披露宴を執り行う運びとなりました
+
+つきましては 日頃よりお世話になっております親族の皆さまに
+ぜひご臨席を賜りたく 謹んでご案内申し上げます
+
+ご多用の折とは存じますが
+何卒ご出席賜りますよう 心よりお願い申し上げます
+
+謹白
+
+三宅 智也
+小松 美穂乃`
+const familyMessage = computed(() => (rawFamilyMessage ? rawFamilyMessage : fallbackFamilyMessage))
 const rawToastExtra = ((invitation as any).toastSpeakerMessage ?? '').toString().trim()
 const fallbackToastExtra = `あわせて 乾杯のご発声を快くお引き受けくださり 心より御礼申し上げます\n披露宴の開宴に合わせてご挨拶を賜りたく存じますので 当日もどうぞよろしくお願いいたします`
 const toastExtraMessage = computed(() => (rawToastExtra ? rawToastExtra : fallbackToastExtra))
@@ -684,6 +712,7 @@ function mergeMessageWithExtra(base: string, extra: string) {
 }
 const messageText = computed(() => {
   if (guestRole.value === 'reception') return receptionMessage.value
+  if (guestRole.value === 'family') return familyMessage.value
   const base = generalMessage.value
   if (guestRole.value !== 'toast') return base
   return mergeMessageWithExtra(base, toastExtraMessage.value)
@@ -808,11 +837,16 @@ const brideMessage = (invitation.brideMessage || '大好きな皆さまと素敵
 
 // Optional times (if set in app.config.ts)
 const ceremonyTime = (invitation as any).ceremonyTime || ''
+const displayCeremonyTime = computed(() => (guestRole.value === 'family' ? '12:45' : ceremonyTime))
 const receptionTime = (invitation as any).receptionTime || ''
 const receptionOpenTime = (invitation as any).receptionOpenTime || ''
 const receptionStaffCallTime = (invitation as any).receptionStaffCallTime || ''
 const displayReceptionOpenTime = computed(() => receptionOpenTime || '')
-const displayReceptionCallTime = computed(() => (guestRole.value === 'reception' ? (receptionStaffCallTime || '') : ''))
+const displayReceptionCallTime = computed(() => {
+  if (guestRole.value === 'family') return '11:45'
+  if (guestRole.value === 'reception') return receptionStaffCallTime || ''
+  return ''
+})
 const DEFAULT_EVENT_DATE = '2026-02-07'
 
 function parseLocalDate(iso?: string) {
