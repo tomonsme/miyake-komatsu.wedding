@@ -418,6 +418,54 @@
 ご変更がございましたら再送信にてお知らせください</span>
                 </label>
 
+                <section class="mt-6 rounded-2xl border border-white/15 bg-white/5 p-4 md:p-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-semibold text-white/90">同伴者のご回答（任意）</p>
+                      <p class="text-xs text-white/65">必要に応じて 同伴者の情報をご入力ください</p>
+                    </div>
+                    <button type="button" class="btn-icon text-xs text-white/80 hover:text-white disabled:opacity-30"
+                      @click="addCompanion" :disabled="form.companions.length >= maxCompanions">
+                      + 同伴者を追加
+                    </button>
+                  </div>
+                  <p v-if="!form.companions.length" class="mt-3 text-xs text-white/65">追加ボタンで入力欄を表示できます</p>
+                  <div v-else class="mt-4">
+                    <div class="flex items-center justify-between text-xs text-white/70">
+                      <button type="button" class="btn-icon px-2 py-1 rounded-full border border-white/20 hover:border-white/40 disabled:opacity-30"
+                        @click="activeCompanionIndex = Math.max(0, activeCompanionIndex - 1)" :disabled="activeCompanionIndex <= 0">
+                        前へ
+                      </button>
+                      <span>ゲスト {{ activeCompanionIndex + 1 }} / {{ form.companions.length }}</span>
+                      <button type="button" class="btn-icon px-2 py-1 rounded-full border border-white/20 hover:border-white/40 disabled:opacity-30"
+                        @click="activeCompanionIndex = Math.min(form.companions.length - 1, activeCompanionIndex + 1)"
+                        :disabled="activeCompanionIndex >= form.companions.length - 1">
+                        次へ
+                      </button>
+                    </div>
+                    <div class="mt-4 space-y-4">
+                      <div v-for="(companion, idx) in form.companions" :key="idx" v-show="activeCompanionIndex === idx" class="space-y-4">
+                        <label class="field">
+                          <span class="field__label">お名前（任意）</span>
+                          <input v-model="companion.name" type="text" class="field__control" placeholder="例）山田 太郎" />
+                        </label>
+                        <label class="field">
+                          <span class="field__label">アレルギー・苦手な食材（任意）</span>
+                          <textarea v-model="companion.dietary" rows="2" class="field__control" placeholder="例）甲殻類アレルギー／生魚が苦手 など"></textarea>
+                        </label>
+                        <label class="field">
+                          <span class="field__label">メモ（任意）</span>
+                          <textarea v-model="companion.note" rows="2" class="field__control" placeholder="席次やその他のご要望など"></textarea>
+                        </label>
+                        <div class="text-right">
+                          <button type="button" class="btn-icon text-xs text-white/65 underline underline-offset-4 hover:text-white"
+                            @click="removeCompanion(idx)">この同伴者を削除</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
 
                 <div class="mt-2 grid gap-2 text-center md:flex md:flex-col md:items-center md:justify-center">
                   <p class="sr-only" aria-live="polite">{{ draftStatus==='saved' ? '下書きを保存しました' : (draftStatus==='restored' ? '下書きを読み込みました' : (draftStatus==='cleared' ? '下書きを削除しました' : '')) }}</p>
@@ -870,6 +918,12 @@ const rsvpDateHuman = computed(() => {
 
 const publicConfig = useRuntimeConfig().public
 
+type CompanionEntry = {
+  name: string
+  dietary: string
+  note: string
+}
+
 const form = reactive({
   name: '',
   email: '',
@@ -880,7 +934,8 @@ const form = reactive({
   postalCode: '',
   address1: '',
   address2: '',
-  message: ''
+  message: '',
+  companions: [] as CompanionEntry[]
 })
 
 const rsvpStatus = ref<'idle' | 'ok' | 'error'>('idle')
@@ -899,6 +954,18 @@ function composeRsvpMessage() {
     parts.push('お飲み物：アルコール不可')
   }
   if (form.message?.trim()) parts.push(`メッセージ：${form.message.trim()}`)
+  if (form.companions.length) {
+    parts.push('--- 同伴者情報 ---')
+    form.companions.forEach((guest, idx) => {
+      const lines: string[] = []
+      if (guest.name.trim()) lines.push(`お名前：${guest.name.trim()}`)
+      if (guest.dietary.trim()) lines.push(`アレルギー等：${guest.dietary.trim()}`)
+      if (guest.note.trim()) lines.push(`備考：${guest.note.trim()}`)
+      if (lines.length) {
+        parts.push(`[ゲスト${idx + 1}]`, ...lines)
+      }
+    })
+  }
   return parts.join('\n')
 }
 
@@ -988,6 +1055,28 @@ function clearCommittedAttendance() {
       localStorage.removeItem(RSVP_COMMITTED_KEY)
     }
   } catch {}
+}
+
+const maxCompanions = 4
+const activeCompanionIndex = ref(0)
+function createCompanion(): CompanionEntry {
+  return {
+    name: '',
+    dietary: '',
+    note: ''
+  }
+}
+function addCompanion() {
+  if (form.companions.length >= maxCompanions) return
+  form.companions.push(createCompanion())
+  activeCompanionIndex.value = form.companions.length - 1
+}
+function removeCompanion(index: number) {
+  if (index < 0 || index >= form.companions.length) return
+  form.companions.splice(index, 1)
+  if (activeCompanionIndex.value >= form.companions.length) {
+    activeCompanionIndex.value = Math.max(0, form.companions.length - 1)
+  }
 }
 
 function updateCountdown() {
@@ -1220,7 +1309,7 @@ function softBreakAddress(s?: string) {
 
 // Draft autosave/load（静かに自動保存し、明示操作時だけトーストを出す）
 const DRAFT_KEY = 'rsvp_draft_v1'
-type DraftState = Partial<typeof form> & { attendance?: string }
+type DraftState = Partial<typeof form> & { attendance?: string; companions?: CompanionEntry[] }
 const draftStatus = ref<'idle' | 'restored' | 'saved' | 'cleared'>('idle')
 
 function loadDraft() {
@@ -1229,7 +1318,16 @@ function loadDraft() {
     const raw = localStorage.getItem(DRAFT_KEY)
     if (!raw) return
     const data = JSON.parse(raw) as DraftState
+    const savedCompanions = Array.isArray(data.companions)
+      ? data.companions.map((c) => ({
+          name: (c?.name || '').toString(),
+          dietary: (c?.dietary || '').toString(),
+          note: (c?.note || '').toString()
+        }))
+      : []
+    delete (data as any).companions
     Object.assign(form, data)
+    form.companions = savedCompanions
     draftStatus.value = 'restored'
     setTimeout(() => { if (draftStatus.value === 'restored') draftStatus.value = 'idle' }, 2000)
   } catch {}
@@ -1237,7 +1335,7 @@ function loadDraft() {
 function saveDraft(showToast = false) {
   try {
     if (typeof window === 'undefined') return
-    const copy: DraftState = { ...form }
+    const copy: DraftState = JSON.parse(JSON.stringify(form))
     localStorage.setItem(DRAFT_KEY, JSON.stringify(copy))
     if (showToast) {
       draftStatus.value = 'saved'
@@ -1254,6 +1352,14 @@ watch(form, () => {
     saveDraft(false)
   }, 500)
 }, { deep: true })
+
+watch(() => form.companions.length, (len) => {
+  if (len === 0) {
+    activeCompanionIndex.value = 0
+  } else if (activeCompanionIndex.value >= len) {
+    activeCompanionIndex.value = len - 1
+  }
+})
 
 onMounted(() => {
   loadDraft()
