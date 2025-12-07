@@ -359,14 +359,7 @@
             <form v-else class="mt-4 grid gap-6" @submit.prevent="submitRsvp" aria-labelledby="rsvp-title">
               <!-- まず出欠を選ぶ -->
               <p class="text-center text-sm text-white/80">お手数ではございますが　出席情報のご登録をお願い申し上げます</p>
-              <!-- Draft toolbar -->
-              <div class="mx-auto mb-1 flex max-w-md items-center justify-center gap-3 text-xs text-white/60">
-                <span v-if="draftStatus==='restored'">下書きを読み込みました</span>
-                <span v-else-if="draftStatus==='saved'">下書きを保存しました</span>
-                <span v-else>自動で下書き保存されます</span>
-                <button type="button" class="underline decoration-white/30 underline-offset-4 hover:text-white" @click="clearDraft">下書きを削除</button>
-              </div>
-            <div v-if="!committedAttendance" class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
+            <div class="flex items-center justify-center mt-2" role="group" aria-label="出欠選択">
               <div class="choice-toggle">
                 <button type="button" @click="form.attendance = 'attending'"
                   class="rsvp-choice rsvp-choice--attend h-11 md:h-12 px-7 text-base"
@@ -380,11 +373,6 @@
                   aria-label="ご欠席を選択"><span class="rsvp-choice__label">ご欠席</span></button>
               </div>
             </div>
-            <div v-else class="mt-3 text-center text-sm text-white/85">
-              <p>現在のご回答は {{ committedAttendance === 'attending' ? 'ご出席' : 'ご欠席' }} です</p>
-              <p class="mt-1 text-xs text-white/65">内容を修正される場合は このまま項目を更新して再度送信してください</p>
-            </div>
-
               <!-- 出席の場合のみフォーム表示 -->
               <template v-if="form.attendance === 'attending'">
                 <div class="grid gap-4 md:grid-cols-2">
@@ -993,6 +981,14 @@ const timeLeft = reactive({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 // 一度提出したゲスト向けの「出欠ロック」状態
 const RSVP_COMMITTED_KEY = 'rsvp_committed_v1'
 const committedAttendance = ref<'attending' | 'declining' | null>(null)
+function clearCommittedAttendance() {
+  committedAttendance.value = null
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(RSVP_COMMITTED_KEY)
+    }
+  } catch {}
+}
 
 function updateCountdown() {
   if (!hasValidDate.value) return
@@ -1249,16 +1245,6 @@ function saveDraft(showToast = false) {
     }
   } catch {}
 }
-function manualSaveDraft() { saveDraft(true) }
-function clearDraft() {
-  try {
-    if (typeof window === 'undefined') return
-    localStorage.removeItem(DRAFT_KEY)
-    draftStatus.value = 'cleared'
-    setTimeout(() => { if (draftStatus.value === 'cleared') draftStatus.value = 'idle' }, 1600)
-  } catch {}
-}
-
 let draftTimer: any
 watch(form, () => {
   if (typeof window === 'undefined') return

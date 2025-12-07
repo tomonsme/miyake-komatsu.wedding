@@ -153,7 +153,10 @@ async function sendEmailNotifications(options: {
     payload.message || '(なし)'
   ].join('\n')
 
-  const guestText = [
+  const messageLinesRaw = (payload.message || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
+  const formattedMessageLines = messageLinesRaw.length ? messageLinesRaw : ['(なし)']
+
+  const guestTextLines = [
     `${payload.name} 様`,
     '',
     'このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます',
@@ -171,17 +174,17 @@ async function sendEmailNotifications(options: {
     `・出欠情報：${subjectTag}`,
     `・お名前：${payload.name}`,
     `・メールアドレス：${payload.email}`,
+    ...formattedMessageLines.map((line) => line),
     '',
-    payload.message || '(なし)',
-    '',
-    'このメールにお心当たりがない場合は破棄してください',
+    'このメールにお心当たりがない場合は 破棄してください',
     '',
     '今後ともどうぞよろしくお願いいたします',
     '',
     '----------------------------------------',
     groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
     'Wedding Reception'
-  ].filter((line) => line !== '').join('\n')
+  ].filter((line) => line !== '')
+  const guestText = guestTextLines.join('\n')
 
   const headers = {
     Authorization: `Bearer ${apiKey}`,
