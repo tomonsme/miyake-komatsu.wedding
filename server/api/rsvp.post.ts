@@ -254,7 +254,7 @@ async function sendEmailNotifications(options: {
       from: fromObj,
       personalizations: [{ to: [{ email: payload.email }] }],
       reply_to: replyToObj,
-      subject: 'ご回答ありがとうございます（自動送信）',
+      subject: 'ご回答ありがとうございます',
       content: [
         { type: 'text/plain', value: guestPlainText },
         { type: 'text/html', value: guestHtml }
