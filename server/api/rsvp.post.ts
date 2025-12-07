@@ -141,6 +141,9 @@ async function sendEmailNotifications(options: {
     console.warn('[rsvp.email] failed to read app config', e)
   }
 
+  const messageLinesRaw = (payload.message || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
+  const formattedMessageLines = messageLinesRaw.length ? messageLinesRaw : ['(なし)']
+
   const adminText = [
     '新しいRSVPが届きました',
     '',
@@ -150,7 +153,7 @@ async function sendEmailNotifications(options: {
     `出欠：${payload.attendance}`,
     '',
     '詳細：',
-    payload.message || '(なし)'
+    ...formattedMessageLines
   ].join('\n')
 
   const messageLinesRaw = (payload.message || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
@@ -174,7 +177,7 @@ async function sendEmailNotifications(options: {
     `・出欠情報：${subjectTag}`,
     `・お名前：${payload.name}`,
     `・メールアドレス：${payload.email}`,
-    ...formattedMessageLines.map((line) => line),
+    ...formattedMessageLines.map((line) => `・${line}`),
     '',
     'このメールにお心当たりがない場合は 破棄してください',
     '',
@@ -184,7 +187,41 @@ async function sendEmailNotifications(options: {
     groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
     'Wedding Reception'
   ].filter((line) => line !== '')
-  const guestText = guestTextLines.join('\n')
+  const scheduleItems = [
+    eventDateLabel ? `開催日：${eventDateLabel}` : '',
+    ceremonyTime ? `挙式開始時刻：${ceremonyTime}` : '',
+    receptionOpenTime ? `受付開始時刻：${receptionOpenTime}` : '',
+    receptionTime ? `披露宴開始時刻：${receptionTime}` : '',
+    venueName ? `会場名：${venueName}` : '',
+    venueAddress ? `会場住所：${venueAddress}` : ''
+  ].filter(Boolean)
+
+  const detailItems = [
+    `出欠情報：${subjectTag}`,
+    `お名前：${payload.name}`,
+    `メールアドレス：${payload.email}`,
+    ...formattedMessageLines
+  ]
+
+  const guestHtml = `
+    <p>${escapeHtml(payload.name)} 様</p>
+    <p>このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます。</p>
+    <p>当日は 下記のスケジュールでお迎えできるよう準備を進めております。</p>
+    ${
+      scheduleItems.length
+        ? `<h3>当日のご案内</h3><ul>${scheduleItems
+            .map((item) => `<li>${escapeHtml(item)}</li>`)
+            .join('')}</ul>`
+        : ''
+    }
+    <h3>今回お預かりした内容</h3>
+    <ul>
+      ${detailItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
+    </ul>
+    <p>このメールにお心当たりがない場合は 破棄してください。</p>
+    <p>今後ともどうぞよろしくお願いいたします。</p>
+    <p>----------------------------------------<br />${escapeHtml(groomName || '')}${groomName && brideName ? '・' : ''}${escapeHtml(brideName || '')}<br />Wedding Reception</p>
+  `
 
   const headers = {
     Authorization: `Bearer ${apiKey}`,
@@ -221,7 +258,10 @@ async function sendEmailNotifications(options: {
       personalizations: [{ to: [{ email: payload.email }] }],
       reply_to: replyToObj,
       subject: 'ご回答ありがとうございます（自動送信）',
-      content: [{ type: 'text/plain', value: guestText }]
+      content: [
+        { type: 'text/plain', value: guestPlainText },
+        { type: 'text/html', value: guestHtml }
+      ]
     })
   })
   if (!guestRes.ok) {
@@ -230,4 +270,17 @@ async function sendEmailNotifications(options: {
   }
 
   return 'sent'
+}
+
+function escapeHtml(str: string) {
+  return str.replace(/[&<>"']/g, (ch) => {
+    switch (ch) {
+      case '&': return '&amp;'
+      case '<': return '&lt;'
+      case '>': return '&gt;'
+      case '"': return '&quot;'
+      case '\'': return '&#39;'
+      default: return ch
+    }
+  })
 }
