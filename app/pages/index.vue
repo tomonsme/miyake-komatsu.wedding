@@ -430,7 +430,7 @@
               <!-- 欠席の場合は誤操作防止の確定を要求 -->
               <template v-else-if="form.attendance === 'declining'">
                 <div class="mx-auto max-w-sm space-y-4 text-center">
-                  <p class="text-sm text-white/85 whitespace-pre-line">誤操作防止のため\n確認の上で確定してください</p>
+              <p class="text-sm text-white/85">誤操作防止のため 確認の上で確定してください</p>
                   <label class="inline-flex cursor-pointer items-center justify-center gap-2 text-sm text-white/85">
                     <input type="checkbox" v-model="declineConfirm" class="h-4 w-4 rounded border-champagne/60 text-gold focus:ring-gold" />
                     <span>ご欠席にて確定します</span>
