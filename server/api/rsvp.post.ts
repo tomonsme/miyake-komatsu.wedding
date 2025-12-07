@@ -156,9 +156,6 @@ async function sendEmailNotifications(options: {
     ...formattedMessageLines
   ].join('\n')
 
-  const messageLinesRaw = (payload.message || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
-  const formattedMessageLines = messageLinesRaw.length ? messageLinesRaw : ['(なし)']
-
   const guestTextLines = [
     `${payload.name} 様`,
     '',
@@ -187,6 +184,8 @@ async function sendEmailNotifications(options: {
     groomName || brideName ? `${groomName}${groomName && brideName ? '・' : ''}${brideName}` : '',
     'Wedding Reception'
   ].filter((line) => line !== '')
+  const guestPlainText = guestTextLines.join('\n')
+
   const scheduleItems = [
     eventDateLabel ? `開催日：${eventDateLabel}` : '',
     ceremonyTime ? `挙式開始時刻：${ceremonyTime}` : '',
