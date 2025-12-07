@@ -162,7 +162,7 @@ async function sendEmailNotifications(options: {
     'このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます',
     '当日は 下記のスケジュールでお迎えできるよう準備を進めております',
     '',
-    '■ 当日のご案内',
+    '【当日のご案内】',
     eventDateLabel ? `・開催日：${eventDateLabel}` : '',
     ceremonyTime ? `・挙式開始時刻：${ceremonyTime}` : '',
     receptionOpenTime ? `・受付開始時刻：${receptionOpenTime}` : '',
@@ -170,13 +170,14 @@ async function sendEmailNotifications(options: {
     venueName ? `・会場名：${venueName}` : '',
     venueAddress ? `・会場住所：${venueAddress}` : '',
     '',
-    '■ 今回お預かりした内容',
+    '【今回お預かりした内容】',
     `・出欠情報：${subjectTag}`,
     `・お名前：${payload.name}`,
     `・メールアドレス：${payload.email}`,
     ...formattedMessageLines.map((line) => `・${line}`),
     '',
     'このメールにお心当たりがない場合は 破棄してください',
+    'ご不明点は 招待状の送信者までご連絡ください',
     '',
     '今後ともどうぞよろしくお願いいたします',
     '',
@@ -204,21 +205,22 @@ async function sendEmailNotifications(options: {
 
   const guestHtml = `
     <p>${escapeHtml(payload.name)} 様</p>
-    <p>このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます。</p>
-    <p>当日は 下記のスケジュールでお迎えできるよう準備を進めております。</p>
+    <p>このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます</p>
+    <p>当日は 下記のスケジュールでお迎えできるよう準備を進めております</p>
     ${
       scheduleItems.length
-        ? `<h3>当日のご案内</h3><ul>${scheduleItems
+        ? `<p><strong>【当日のご案内】</strong></p><ul>${scheduleItems
             .map((item) => `<li>${escapeHtml(item)}</li>`)
             .join('')}</ul>`
         : ''
     }
-    <h3>今回お預かりした内容</h3>
+    <p><strong>【今回お預かりした内容】</strong></p>
     <ul>
       ${detailItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
     </ul>
-    <p>このメールにお心当たりがない場合は 破棄してください。</p>
-    <p>今後ともどうぞよろしくお願いいたします。</p>
+    <p>このメールにお心当たりがない場合は 破棄してください</p>
+    <p>ご不明点がございましたら 招待状の送信者までお知らせください</p>
+    <p>今後ともどうぞよろしくお願いいたします</p>
     <p>----------------------------------------<br />${escapeHtml(groomName || '')}${groomName && brideName ? '・' : ''}${escapeHtml(brideName || '')}<br />Wedding Reception</p>
   `
 
