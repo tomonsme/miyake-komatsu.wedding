@@ -158,7 +158,7 @@ async function sendEmailNotifications(options: {
 
   const guestTextLines = [
     `${payload.name} 様`,
-    'このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます 当日は 下記のスケジュールでお迎えできるよう準備を進めております',
+    'このたびは招待サイトから出欠のご連絡をお送りくださりありがとうございます 当日は下記のスケジュールでお迎えできるよう準備を進めております',
     '【当日のご案内】',
     eventDateLabel ? `・開催日：${eventDateLabel}` : '',
     ceremonyTime ? `・挙式開始時刻：${ceremonyTime}` : '',
@@ -202,7 +202,7 @@ async function sendEmailNotifications(options: {
 
   const guestHtml = `
     <p>${escapeHtml(payload.name)} 様</p>
-    <p>このたびは 招待サイトから出欠のご連絡をお送りくださり ありがとうございます<br />当日は 下記のスケジュールでお迎えできるよう準備を進めております</p>
+    <p>このたびは招待サイトから出欠のご連絡をお送りくださりありがとうございます<br />当日は下記のスケジュールでお迎えできるよう準備を進めております</p>
     ${
       scheduleItems.length
         ? `<p><strong>【当日のご案内】</strong></p><ul>${scheduleItems
