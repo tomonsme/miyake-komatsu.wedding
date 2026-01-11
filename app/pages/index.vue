@@ -305,15 +305,21 @@
       <div class="panel-navy panel-navy--flat fade-in-soft mx-auto max-w-lg">
         <div class="panel__inner text-center pt-4 pb-2 md:pt-6 md:pb-3">
           <p
+            v-if="isRsvpClosed"
+            class="text-sm leading-relaxed text-white/90 wrap-nice whitespace-pre-line"
+            v-html="widowSafe('ご回答ありがとうございました\n当日はどうぞよろしくお願い申し上げます')"
+          ></p>
+          <p
+            v-else
             class="text-sm leading-relaxed text-white/90 wrap-nice whitespace-pre-line"
             v-html="widowSafe('ご多用のところ 誠に恐れ入りますが\n下記の期日までに ご出欠の旨をご登録くださいますようお願い申し上げます')"
           ></p>
-          <p v-if="hasValidDate" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
+          <p v-if="hasValidDate && !isRsvpClosed" class="mt-2 text-sm leading-relaxed text-white/90 wrap-nice">
             <span class="text-white/65 tracking-wide">ご回答期限：</span>
             <span class="ml-1 nums-unified text-lg text-gold">{{ rsvpDateHuman }}</span>
             <span class="ml-1">頃までにいただけますと幸いです</span>
           </p>
-          <button type="button" class="btn-callout btn-lg btn-icon mt-3" @click="openRsvp()" aria-label="ご出欠のご回答フォームを開く">
+          <button v-if="!isRsvpClosed" type="button" class="btn-callout btn-lg btn-icon mt-3" @click="openRsvp()" aria-label="ご出欠のご回答フォームを開く">
             招待状に回答する
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
@@ -914,6 +920,16 @@ const rsvpDateHuman = computed(() => {
   if (deadlineIso) return make(parseLocalDate(deadlineIso))
   // Fallback: use event date
   return make(parseLocalDate(invitation.eventDateIso || DEFAULT_EVENT_DATE))
+})
+
+const isRsvpClosed = computed(() => {
+  const deadlineIso = (invitation as any).rsvpDeadlineIso as string | undefined
+  if (!deadlineIso) return false
+  const deadline = parseLocalDate(deadlineIso)
+  if (!deadline || Number.isNaN(deadline.getTime())) return false
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  return today.getTime() > deadline.getTime()
 })
 
 const publicConfig = useRuntimeConfig().public
